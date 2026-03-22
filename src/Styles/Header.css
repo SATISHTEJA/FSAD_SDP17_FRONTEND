@@ -5,8 +5,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
-  background: #00070e;
-  color: #f6f6f6;
+  background: #f4f5f5;
+  color: #0b0707;
 }
 
 .leftpages {
@@ -58,18 +58,6 @@
   color: #f0f1f3;
 }
 
-.register {
-  background: #5a75a0;
-  color: white;
-  font-size: 15px;
-  padding: 8px 16px;
-  border-radius: 8px;
-  text-decoration: none;
-}
-
-.register:hover {
-  background: rgb(14, 20, 59);
-}
 
 /*dashboard header*/
 

@@ -1,0 +1,56 @@
+.footer{
+    width: 100%;
+    max-width: 100vw;
+    padding: 20px 15px;
+    background: white;
+    color: black;
+    font-size: 20px;
+    text-align: center;
+    box-sizing: border-box;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.leftfoot {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.rightfoot {
+  display: flex;
+  align-items: right;
+  text-decoration: none;
+  gap: 18px;
+}
+
+.refers{
+  background: white;
+  border: none;
+  font-size: 20px;
+  text-decoration: none;
+  color: rgb(10, 10, 10);
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.refers:hover{
+  background:#cad8e6;
+  border: none;
+  border-radius:8px ;
+  padding: 8px 16px;
+  color: rgb(10, 10, 10);
+  cursor: pointer;
+}
+
+.logofoot {
+  height: 40px;
+  border: circle;
+  border-radius: 8px;
+}
+
+.icon{
+    margin-left:10px;
+}

@@ -9,6 +9,7 @@
 
   padding: 0 24px;
 }
+
 .headerpages {
   height: 64px;
   background: #00070e;
@@ -39,10 +40,10 @@
 }
 
 .home:hover {
-  background:#f3f4f5;
+  background: #f3f4f5;
   border: none;
   font-size: 20px;
-  border-radius:8px ;
+  border-radius: 8px;
   padding: 4px 10px;
   color: #000206;
 }
@@ -97,9 +98,9 @@
 }
 
 .login:hover {
-  background:#00060c;
+  background: #00060c;
   border: none;
-  border-radius:8px ;
+  border-radius: 8px;
   padding: 4px 10px;
   color: #f0f1f3;
 }
@@ -116,5 +117,5 @@
 }
 
 .register:hover {
-  background: rgb(14, 20, 59);
+  background: rgb(64, 83, 202);
 }

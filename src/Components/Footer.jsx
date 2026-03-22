@@ -1,22 +1,26 @@
-import React from "react";
+import logo from "../assets/header1.png"
+import { Github, Instagram } from "lucide-react";
+import "../Styles/Footerstyling.css"
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <footer
-      style={{
-        width: "100%",
-        maxWidth: "100vw",
-        padding: "20px 15px",
-        background: "White",
-        color: "Black",
-        fontSize: "25px",
-        textAlign: "center",
-        boxSizing: "border-box",
-        borderRadius:"10px",
-      }}
-    >
-      © 2026 Remote Internship Platform | BABLU
-    </footer>
+    <>
+    <div className="footer">
+      <div className="leftfoot">
+        <img src={logo} className="logofoot"/>
+        </div>
+        <div>© 2026 Remote Internship Platform | SATISHTEJA
+        <a href="https://github.com/SATISHTEJA/FSADInternship">
+          <Github size={24} className="icon"/>
+        </a>
+        </div>
+      <div className="rightfoot">
+        <Link to="/about" className="refers">About</Link>
+        <Link to="/contact" className="refers">Contact</Link>
+      </div>
+    </div>
+    </>
   );
 };
 

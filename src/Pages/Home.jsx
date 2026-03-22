@@ -1,5 +1,5 @@
 import "../Styles/Homestyling.css";
-import { motion } from "framer-motion";
+import { motion, px } from "framer-motion";
 import {
   Briefcase,
   ClipboardCheckIcon,
@@ -12,7 +12,6 @@ import {
   ShieldCheck
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import Footer from "../Components/Footer"; // adjust path if needed
 
 const Home = () => {
   const features = [
@@ -64,8 +63,8 @@ const Home = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            Remote Internship <br />
-            <span>Management Platform</span>
+            <span>Remote Internship <br />
+            Management Platform</span>
           </motion.h1>
 
           <p className="hero-sub">
@@ -94,29 +93,29 @@ const Home = () => {
               <div className="why-icon blue">
                 <Zap size={26} />
               </div>
-              <h3>Real-Time Collaboration</h3>
-              <p>Instant communication between mentors and interns.</p>
+              <p className="fontsizehead">Real-Time Collaboration</p>
+              <p className="fontsizetext">Instant communication between mentors and interns.</p>
             </div>
 
             <div className="why-card">
               <div className="why-icon purple">
                 <BarChart3 size={26} />
               </div>
-              <h3>Advanced Analytics</h3>
-              <p>Track progress with structured performance insights.</p>
+              <p className="fontsizehead">Advanced Analytics</p>
+              <p className="fontsizetext">Track progress with structured performance insights.</p>
             </div>
 
             <div className="why-card">
               <div className="why-icon green">
                 <ShieldCheck size={26} />
               </div>
-              <h3>Secure & Reliable</h3>
-              <p>Enterprise-grade security with full data protection.</p>
+              <p className="fontsizehead"h3>Secure & Reliable</p>
+              <p className="fontsizetext">Enterprise-grade security with full data protection.</p>
             </div>
           </div>
         </section>
 
-        <section className="features">
+        <section className="features" >
           <h2 className="section-title">Platform Features</h2>
 
           <div className="features-grid">
@@ -147,25 +146,25 @@ const Home = () => {
 
           <div className="how-grid">
             <div>
-              <span>1</span>
+              <span style={{color:"white"}}>1</span>
               <h4>Sign Up</h4>
               <p>Create your account</p>
             </div>
 
             <div>
-              <span>2</span>
+              <span style={{color:"white"}}>2</span>
               <h4>Connect</h4>
               <p>Post or apply for internships</p>
             </div>
 
             <div>
-              <span>3</span>
+              <span style={{color:"white"}}>3</span>
               <h4>Collaborate</h4>
               <p>Work together on tasks</p>
             </div>
 
             <div>
-              <span>4</span>
+              <span style={{color:"white"}}>4</span>
               <h4>Succeed</h4>
               <p>Complete and grow</p>
             </div>
