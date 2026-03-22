@@ -1,26 +1,31 @@
-import logo from "../assets/header1.png"
-import { Github, Instagram } from "lucide-react";
-import "../Styles/Footerstyling.css"
+import { Github } from "lucide-react";
+import "../Styles/Footerstyling.css";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <>
     <div className="footer">
+
       <div className="leftfoot">
-        <img src={logo} className="logofoot"/>
-        </div>
-        <div>© 2026 Remote Internship Platform | SATISHTEJA
-        <a href="https://github.com/SATISHTEJA/FSADInternship">
-          <Github size={24} className="icon"/>
+        <a
+          href="https://github.com/SATISHTEJA/FSADInternship"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Github size={22} className="icon" />
         </a>
-        </div>
+      </div>
+
+      <div className="centerfoot">
+        © 2026 Remote Internship Platform | <strong>SATISHTEJA</strong>
+      </div>
+
       <div className="rightfoot">
         <Link to="/about" className="refers">About</Link>
         <Link to="/contact" className="refers">Contact</Link>
       </div>
+
     </div>
-    </>
   );
 };
 

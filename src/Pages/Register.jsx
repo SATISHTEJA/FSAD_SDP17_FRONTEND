@@ -238,7 +238,7 @@ const Register = () => {
               </>
             )}
             <div className="link-row">
-              <a onClick={prevStep} className="login-btn" >Back</a>
+              <button onClick={prevStep} className="login-btn" >Back</button>
               <button onClick={nextStep} className="login-btn">Next</button>
             </div>
 
@@ -296,7 +296,6 @@ const Register = () => {
                   setFormData({ ...formData, confirmPassword: value });
 
                   if (formData.password !== value) {
-                    setPasswordError("Passwords do not match");
                     setIsCaptchaValid(false);
                   } else {
                     setPasswordError("");
@@ -305,7 +304,16 @@ const Register = () => {
                 onPaste={(e) => e.preventDefault()}
                 onCopy={(e) => e.preventDefault()}
                 onCut={(e) => e.preventDefault()}
-              />
+              />{formData.confirmPassword && (
+                <p style={{
+                  color: formData.password === formData.confirmPassword ? "green" : "red",
+                  fontWeight: "bold"
+                }}>
+                  {formData.password === formData.confirmPassword
+                    ? "✔ Passwords match"
+                    : "✖ Passwords do not match"}
+                </p>
+              )}
               <span onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="eye-icon">
                 {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
               </span>
@@ -313,9 +321,11 @@ const Register = () => {
 
             {passwordError && <p style={{ color: "red" }}>{passwordError}</p>}
 
-            <div>
-              Captcha: {captcha}
-              <button onClick={generateCaptcha}>Refresh</button>
+            <div className="captcha-box">
+              <span className="captcha-text">Captcha: {captcha}</span>
+              <button className="refresh-btn" onClick={generateCaptcha}>
+                Refresh
+              </button>
             </div>
 
             <input
@@ -334,8 +344,18 @@ const Register = () => {
               onCopy={(e) => e.preventDefault()}
               onCut={(e) => e.preventDefault()}
             />
+            {userCaptcha && (
+              <p style={{
+                color: userCaptcha === captcha ? "green" : "red",
+                fontWeight: "bold"
+              }}>
+                {userCaptcha === captcha
+                  ? "✔ Captcha correct"
+                  : "✖ Captcha incorrect"}
+              </p>
+            )}
             <div className="link-row">
-              <a onClick={prevStep} className="login-btn" >Back</a>
+              <button onClick={prevStep} className="login-btn" >Back</button>
               <button disabled={!isCaptchaValid} onClick={handleRegister} className="login-btn">
                 Register
               </button>

@@ -85,6 +85,7 @@ const Applications = () => {
                   <p><strong>University:</strong> {app.university}</p>
                   <p><strong>GPA:</strong> {app.gpa}</p>
                   <p><strong>Status:</strong> {app.status}</p>
+                  <p><strong>Resume:</strong></p>
                 </div>
 
                 <div className="app-right">

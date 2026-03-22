@@ -1,30 +1,41 @@
 import React from "react";
 import Cpheader from "./Cpheader";
-import Footer from "../Components/Footer"
+import Footer from "../Components/Footer";
 
 const Management = () => {
   return (
     <>
-    <Cpheader />
-    <div style={styles.page}>
-      <div style={styles.card}>
-        <h1 style={styles.title}>Centralized Internship Management</h1>
+      <Cpheader />
 
-        <p>
-          Stores and manages all internship data in one unified platform for
-          efficient administration.
-        </p>
+      <div style={styles.page}>
+        <div style={styles.card}>
 
-        <ul>
-          <li>Organized internship database.</li>
-          <li>Easy updates and monitoring.</li>
-          <li>Improved workflow control.</li>
-        </ul>
+          <h1 style={styles.title}>
+            Centralized Internship Management
+          </h1>
 
-        <a href="/" style={styles.back}>⬅ Back to Home</a>
+          <p style={{ opacity: 0.9 }}>
+            Stores and manages all internship data in one unified platform for
+            efficient administration and streamlined workflow.
+          </p>
+
+          <div style={styles.sectionCard}>
+            <h2 style={styles.heading}>Main Features</h2>
+            <ul>
+              <li> Organized internship database</li>
+              <li> Easy updates and monitoring</li>
+              <li> Improved workflow control</li>
+            </ul>
+          </div>
+
+          <a href="/" style={styles.back}>
+            ⬅ Back to Home
+          </a>
+
+        </div>
       </div>
-    </div>
-    <Footer />
+
+      <Footer />
     </>
   );
 };
@@ -43,6 +54,7 @@ const styles = {
     padding: "40px",
     fontFamily: "Arial, sans-serif",
   },
+
   card: {
     maxWidth: "900px",
     background: "rgba(255,255,255,0.08)",
@@ -50,18 +62,38 @@ const styles = {
     borderRadius: "18px",
     padding: "40px",
     boxShadow: "0 20px 50px rgba(0,0,0,0.4)",
-    lineHeight: "1.6",
+    lineHeight: "1.7",
   },
-  title: { textAlign: "center", color: "#38bdf8" },
-  heading: { color: "#a5b4fc" },
+
+  title: {
+    textAlign: "center",
+    background: "linear-gradient(90deg,#38bdf8,#7c3aed)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    marginBottom: "20px",
+  },
+
+  heading: {
+    color: "#a5b4fc",
+    marginBottom: "10px",
+  },
+
+  sectionCard: {
+    background: "rgba(255,255,255,0.05)",
+    padding: "18px",
+    borderRadius: "12px",
+    marginTop: "20px",
+  },
+
   back: {
     display: "block",
     marginTop: "30px",
     textAlign: "center",
-    background: "#3b82f6",
+    background: "linear-gradient(90deg,#2563eb,#7c3aed)",
     padding: "12px",
     borderRadius: "10px",
     color: "white",
     textDecoration: "none",
+    transition: "0.3s",
   },
 };

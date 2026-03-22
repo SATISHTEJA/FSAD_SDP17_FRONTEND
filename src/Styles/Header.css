@@ -45,18 +45,7 @@
   gap: 18px;
 }
 
-.login {
-  color: #00070e;
-  text-decoration: none;
-  font-size: 20px;
-  padding: 8px 12px;
-}
 
-.login:hover {
-  background: #00060c;
-  border-radius: 8px;
-  color: #f0f1f3;
-}
 
 
 /*dashboard header*/

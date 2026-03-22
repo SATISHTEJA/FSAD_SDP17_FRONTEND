@@ -1,5 +1,6 @@
 .home-wrapper {
-  background: #f8fafc;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e0e7ff, #f0f9ff, #ede9fe);
 }
 
 .hero {
@@ -56,6 +57,9 @@
   border: 1px solid #d1d5db;
   background: white;
   cursor: pointer;
+}
+.secondary-btn:hover {
+  transform: translateY(-3px);
 }
 
 .why {
@@ -132,6 +136,7 @@
   text-align: center;
   border: 1px solid #e5e7eb;
   transition: all 0.3s ease;
+  
 }
 
 .feature-card:hover {

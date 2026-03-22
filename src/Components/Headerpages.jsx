@@ -1,9 +1,10 @@
 import React from 'react'
 import '../Styles/Header.css'
 import logo from '../assets/header1.png'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const HeaderPages = () => {
+  const navigate = useNavigate();
   return (
     <header className="headerpages">
       <div className="left">
@@ -11,6 +12,7 @@ const HeaderPages = () => {
           src={logo}
           alt="KL University"
           className="logo"
+          onClick={() => navigate("/")}
         />
       </div>
 

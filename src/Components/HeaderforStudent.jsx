@@ -9,7 +9,7 @@ const HeaderforStudent = () => {
   const handleLogout = () => {
     localStorage.removeItem("studentProfile");
     localStorage.clear();
-    window.location.href = "/login";
+    window.location.href = "/";
   };
 
   return (
