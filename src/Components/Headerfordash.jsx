@@ -1,84 +1,119 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "../Styles/Headerdash.css";
 import { LogOut, GraduationCap } from "lucide-react";
+import "../Styles/Dashboard.css";
+import { useNavigate } from "react-router-dom";
 
-const Headerfordash = () => {
-  const [user, setUser] = useState(null);
+const HeaderforDash = () => {
   const navigate = useNavigate();
 
+  const storedAdmin =
+    JSON.parse(localStorage.getItem("adminProfile")) || {};
+
+  const [admin, setAdmin] = useState(storedAdmin);
+  const [imgLoading, setImgLoading] = useState(true);
 
   useEffect(() => {
-    const loadUser = () => {
-      const storedUser = JSON.parse(localStorage.getItem("adminProfile"));
-      if (storedUser) setUser(storedUser);
-    };
+  if (!storedAdmin?.id) return;
 
-    loadUser();
+  // ✅ CHECK CACHE FIRST
+  const cached = localStorage.getItem("adminProfileFull");
 
-    // Listen for updates
-    window.addEventListener("storage", loadUser);
-
-    return () => {
-      window.removeEventListener("storage", loadUser);
-    };
-  }, []);
+  if (cached) {
+    const parsed = JSON.parse(cached);
+    setAdmin(parsed);
+    setImgLoading(false);
+  }
+  fetch(`http://localhost:1305/api/employers/${storedAdmin.id}`)
+    .then((res) => res.json())
+    .then((data) => {
+      setAdmin(data);
+      localStorage.setItem("adminProfileFull", JSON.stringify(data));
+      setImgLoading(false);
+    })
+    .catch((err) => console.error(err));
+}, [storedAdmin?.id]);
 
   const handleLogout = () => {
+    localStorage.removeItem("adminProfile");
     localStorage.clear();
-    navigate("/");
+    window.location.href = "/";
   };
 
   return (
     <header className="dash-header">
-
-      {/* LEFT */}
       <div className="dash-left">
         <div className="logo-box">
-          <GraduationCap size={18} color="white" />
+          <GraduationCap size={18} color="Blue" />
         </div>
-        <h2 style={{ color: "black" }}>InternHub Admin</h2>
+        <h2 style={{ color: "black" , cursor: "pointer"}} onClick={() => navigate("/admin-dashboard")}>InternHub Student</h2>
       </div>
 
-      {/* RIGHT */}
-      <div className="dash-right" style={{cursor:"pointer"}}>
-
-        {/* NAME + EMAIL */}
+      <div className="dash-right">
         <div style={{ textAlign: "right" }}>
-          <a href="admin-profile" className="headerloname"><strong style={{ fontSize: "16px", color: "black" }}>
-            {user?.name || "Admin"}
-          </strong></a>
-          <div style={{ fontSize: "14px", color: "#6b7280" }} onClick={() => navigate("/admin-profile")} className="headerloname">
-            {user?.email || "admin@gmail.com"}
+          <a href="/admin-profile" className="headerloname">
+            <strong style={{ color: "black" }}>
+              {admin.empname || "Admin"}
+            </strong>
+          </a>
+
+          <div
+            onClick={() => navigate("/admin-profile")}
+            className="headerloname"
+            style={{ fontSize: "12px", color: "#6b7280" }}
+          >
+            {admin.email || "admin@gmail.com"}
           </div>
         </div>
 
+        {/* ✅ IMAGE FIX */}
+        <div
+          onClick={() => navigate("/admin-profile")}
+          style={{ cursor: "pointer", position: "relative" }}
+        >
+          {imgLoading && (
+            <div
+              style={{
+                width: "40px",
+                height: "40px",
+                borderRadius: "50%",
+                background: "#e5e7eb",
+              }}
+            />
+          )}
 
-        {/* PROFILE IMAGE */}
-        <div onClick={() => navigate("/admin-profile")} style={{cursor:"pointer"}}>
           <img
+            key={admin.image}
+            loading="eager"
             src={
-              user?.image ||
-              "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+              admin?.image
+                ? admin.image.startsWith("data:")
+                  ? admin.image // ✅ base64 directly
+                  : `http://localhost:1305/api/employers/image/${admin.image}`
+                : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
             }
             alt="profile"
+            onLoad={() => setImgLoading(false)}
+            onError={(e) => {
+              e.target.src =
+                "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+              setImgLoading(false);
+            }}
             style={{
               width: "40px",
               height: "40px",
               borderRadius: "50%",
-              objectFit: "cover"
+              objectFit: "cover",
+              display: imgLoading ? "none" : "block",
             }}
           />
         </div>
 
-        {/* LOGOUT */}
         <button className="logout-btn" onClick={handleLogout}>
           <LogOut size={18} />
         </button>
-
       </div>
     </header>
   );
 };
 
-export default Headerfordash;
+export default HeaderforDash;

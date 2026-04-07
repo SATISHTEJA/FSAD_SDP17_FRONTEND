@@ -11,7 +11,7 @@ const Tasks = () => {
   return (
     <>
       <Cpheader />
-      <PageNavigation current="/tasks" />
+      <PageNavigation current="/tasks"/>
 
       <div style={styles.page}>
         <div style={styles.card}>

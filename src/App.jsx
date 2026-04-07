@@ -13,6 +13,7 @@ import Forgetpass from "./Pages/Forgetpass";
 import ProtectedRoute from "./Components/ProtectedRoute";
 
 // Admin
+import AdminLayout from "./Layouts/AdminLayout";
 import Admindashboard from "./Pages/Admindashboard";
 import Postinternship from "./Pages/Postinternship";
 import Applications from "./Pages/Applications";
@@ -21,13 +22,12 @@ import Evaluations from "./Pages/Evaluations";
 import Adminprofile from "./Pages/Adminprofile";
 
 // Student
+import StudentLayout from "./Layouts/StudentLayout";
 import Studentdashboard from "./Pages/Studentdashboard";
 import BrowseInternships from "./Pages/BrowseInternships";
 import MyApplications from "./Pages/MyApplications";
 import MyTasks from "./Pages/MyTasks";
 import Feedback from "./Pages/Feedback";
-import ApplyInternship from "./Pages/ApplyInternship";
-import InternshipDetails from "./Pages/InternshipDetails";
 import Studentprofile from "./Pages/Studentprofile";
 
 // Cards
@@ -56,119 +56,35 @@ const App = () => {
 
       {/* ================= ADMIN PROTECTED ================= */}
       <Route
-        path="/admin-dashboard"
         element={
           <ProtectedRoute allowedRole="admin">
-            <Admindashboard />
+            <AdminLayout />
           </ProtectedRoute>
         }
-      />
-      <Route
-        path="/post-internship"
-        element={
-          <ProtectedRoute allowedRole="admin">
-            <Postinternship />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/applications"
-        element={
-          <ProtectedRoute allowedRole="admin">
-            <Applications />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/track-progress"
-        element={
-          <ProtectedRoute allowedRole="admin">
-            <TrackProgress />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/evaluations"
-        element={
-          <ProtectedRoute allowedRole="admin">
-            <Evaluations />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin-profile"
-        element={
-          <ProtectedRoute allowedRole="admin">
-            <Adminprofile />
-          </ProtectedRoute>
-        }
-      />
+      >
+        <Route path="/admin-dashboard" element={<Admindashboard />} />
+        <Route path="/post-internship" element={<Postinternship />} />
+        <Route path="/applications" element={<Applications />} />
+        <Route path="/track-progress" element={<TrackProgress />} />
+        <Route path="/evaluations" element={<Evaluations />} />
+        <Route path="/admin-profile" element={<Adminprofile />} />
+      </Route>
 
       {/* ================= STUDENT PROTECTED ================= */}
       <Route
-        path="/student-dashboard"
         element={
           <ProtectedRoute allowedRole="student">
-            <Studentdashboard />
+            <StudentLayout />
           </ProtectedRoute>
         }
-      />
-      <Route
-        path="/browse-internships"
-        element={
-          <ProtectedRoute allowedRole="student">
-            <BrowseInternships />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/myapplications"
-        element={
-          <ProtectedRoute allowedRole="student">
-            <MyApplications />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/feedback"
-        element={
-          <ProtectedRoute allowedRole="student">
-            <Feedback />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/mytasks"
-        element={
-          <ProtectedRoute allowedRole="student">
-            <MyTasks />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/apply/:id"
-        element={
-          <ProtectedRoute allowedRole="student">
-            <ApplyInternship />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/internship/:id"
-        element={
-          <ProtectedRoute allowedRole="student">
-            <InternshipDetails />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/student-profile"
-        element={
-          <ProtectedRoute allowedRole="student">
-            <Studentprofile />
-          </ProtectedRoute>
-        }
-      />
+      >
+        <Route path="/student-dashboard" element={<Studentdashboard />} />
+        <Route path="/browse-internships" element={<BrowseInternships />} />
+        <Route path="/myapplications" element={<MyApplications />} />
+        <Route path="/feedback" element={<Feedback />} />
+        <Route path="/mytasks" element={<MyTasks />} />
+        <Route path="/student-profile" element={<Studentprofile />} />
+      </Route>
 
       {/* Card Pages (Optional - keep open or protect if needed) */}
       <Route path="/pio" element={<Pio />} />

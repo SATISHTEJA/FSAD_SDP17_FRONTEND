@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Headerfordash from "../Components/Headerfordash";
+import Loader from "../Components/Loader";
 import "../Styles/Dashboard.css";
 import {
   FileText,
@@ -15,6 +16,14 @@ const Postinternship = () => {
   const navigate = useNavigate();
 
   const [internships, setInternships] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const admin = JSON.parse(localStorage.getItem("adminProfile"));
+    const employerId = admin?.id;
+
+  if (!employerId) {
+  alert("Employer not found. Please login again.");
+  return;
+}
 
   const [form, setForm] = useState({
     title: "",
@@ -26,52 +35,92 @@ const Postinternship = () => {
     skills: "",
   });
 
+  // ✅ FETCH ONLY (LOADER HERE)
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("internships")) || [];
-    setInternships(stored);
+    setLoading(true);
+
+    fetch(`http://localhost:1305/api/internships/employer/${employerId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setInternships(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
   }, []);
 
+  // FORM CHANGE
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = () => {
+  // ✅ POST (NO LOADER)
+  const handleSubmit = async () => {
     if (!form.title || !form.duration || !form.location) return;
 
-    const newInternship = {
-      id: Date.now(),
-      ...form,
-      applicants: [],
-    };
+    try {
+      const res = await fetch(
+        `http://localhost:1305/api/internships?employerId=${employerId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...form,
+            companyname: admin.companyname || "",
+          }),
+        }
+      );
 
-    const updated = [newInternship, ...internships];
+      if (!res.ok) throw new Error("Failed");
 
-    setInternships(updated);
-    localStorage.setItem("internships", JSON.stringify(updated));
+      const data = await res.json();
 
-    alert("Internship Posted Successfully!");
+      setInternships([data, ...internships]);
 
-    setForm({
-      title: "",
-      duration: "",
-      location: "Remote",
-      stipend: "",
-      description: "",
-      requirements: "",
-      skills: "",
+      alert("Internship Posted Successfully!");
+
+      setForm({
+        title: "",
+        duration: "",
+        location: "Remote",
+        stipend: "",
+        description: "",
+        requirements: "",
+        skills: "",
+      });
+    } catch (err) {
+      console.error(err);
+      alert("Error posting internship");
+    }
+  };
+
+  const handleDelete = async (id) => {
+  try {
+    const res = await fetch(`http://localhost:1305/api/internships/delete/${id}`, {
+      method: "DELETE",
     });
-  };
 
-  const handleDelete = (id) => {
-    const updated = internships.filter((item) => item.id !== id);
-    setInternships(updated);
-    localStorage.setItem("internships", JSON.stringify(updated));
-  };
+    const text = await res.text();
+
+    if (!res.ok) {
+      alert(text); // shows backend error
+      return;
+    }
+
+    setInternships(internships.filter((item) => item.id !== id));
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   return (
     <>
-      <Headerfordash />
-
+      {/* ✅ LOADER ONLY DURING FETCH */}
+      {loading && <Loader />}
       <div className="admin-layout" style={{ paddingTop: "70px" }}>
         <aside className="admin-sidebar">
           <button onClick={() => navigate("/admin-dashboard")}>
@@ -124,15 +173,29 @@ const Postinternship = () => {
               onChange={handleChange}
             />
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
-              <select name="duration" value={form.duration} onChange={handleChange}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "20px",
+              }}
+            >
+              <select
+                name="duration"
+                value={form.duration}
+                onChange={handleChange}
+              >
                 <option value="">Select duration</option>
                 <option>1 Month</option>
                 <option>3 Months</option>
                 <option>6 Months</option>
               </select>
 
-              <select name="location" value={form.location} onChange={handleChange}>
+              <select
+                name="location"
+                value={form.location}
+                onChange={handleChange}
+              >
                 <option>Remote</option>
                 <option>Onsite</option>
                 <option>Hybrid</option>
@@ -167,8 +230,15 @@ const Postinternship = () => {
               onChange={handleChange}
             />
 
-            <div style={{ marginTop: "20px", display: "flex", gap: "15px" }}>
+            <div
+              style={{
+                marginTop: "20px",
+                display: "flex",
+                gap: "15px",
+              }}
+            >
               <button onClick={handleSubmit}>Post Internship</button>
+
               <button
                 style={{ background: "#f3f4f6", color: "#111" }}
                 onClick={() => navigate("/admin-dashboard")}
@@ -188,13 +258,17 @@ const Postinternship = () => {
                 <div key={item.id} className="application-card">
                   <div>
                     <h3>{item.title}</h3>
-                    <p><strong>Duration:</strong> {item.duration}</p>
-                    <p><strong>Location:</strong> {item.location}</p>
+                    <p>
+                      <strong>Duration:</strong> {item.duration}
+                    </p>
+                    <p>
+                      <strong>Location:</strong> {item.location}
+                    </p>
                     <p>{item.description}</p>
                   </div>
 
                   <button
-                    className="quick-action secondary"
+                    className="delete-btn"
                     onClick={() => handleDelete(item.id)}
                   >
                     Delete

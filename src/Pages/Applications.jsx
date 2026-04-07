@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Headerfordash from "../Components/Headerfordash";
+import Loader from "../Components/Loader";
 import "../Styles/Dashboard.css";
 import {
   LayoutDashboard,
@@ -14,26 +15,48 @@ import {
 const Applications = () => {
   const navigate = useNavigate();
   const [applications, setApplications] = useState([]);
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    const stored =
-      JSON.parse(localStorage.getItem("applications")) || [];
-    setApplications(stored);
+    setLoading(true);
+    const loggedEmployer = JSON.parse(
+      localStorage.getItem("adminProfile")
+    );
+    const employerId = loggedEmployer?.id || {};
+
+    fetch(`http://localhost:1305/api/applications/employer/${employerId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setApplications(Array.isArray(data) ? data : []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setApplications([]);
+        setLoading(false);
+      });
   }, []);
 
-  const updateStatus = (id, newStatus) => {
-    const updated = applications.map((app) =>
-      app.id === id ? { ...app, status: newStatus } : app
-    );
+  const updateStatus = async (id, newStatus) => {
+    try {
+      const res = await fetch(
+        `http://localhost:1305/api/applications/${id}/status?status=${newStatus}`,
+        {
+          method: "PUT",
+        }
+      );
+      const updatedApp = await res.json();
+      const updatedList = applications.map((app) =>
+        app.id === id ? updatedApp : app
+      );
 
-    setApplications(updated);
-    localStorage.setItem("applications", JSON.stringify(updated));
+      setApplications(updatedList);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
     <>
-      <Headerfordash />
-
       <div className="admin-layout" style={{ paddingTop: "70px" }}>
         <aside className="admin-sidebar">
           <button onClick={() => navigate("/admin-dashboard")}>
@@ -72,43 +95,56 @@ const Applications = () => {
             <h1>Student Applications</h1>
             <p>Review internship applications.</p>
           </div>
-
-          {applications.length === 0 ? (
+          {loading ? (
+            <Loader />
+          ) : !Array.isArray(applications) || applications.length === 0 ? (
             <p>No applications yet.</p>
           ) : (
             applications.map((app) => (
               <div key={app.id} className="application-card">
                 <div>
-                  <h3>{app.internshipTitle}</h3>
-                  <p><strong>Name:</strong> {app.name}</p>
+                  <h3>{app.internship?.title}</h3>
+
+                  <p><strong>Name:</strong> {app.fullName}</p>
                   <p><strong>Email:</strong> {app.email}</p>
                   <p><strong>University:</strong> {app.university}</p>
                   <p><strong>GPA:</strong> {app.gpa}</p>
                   <p><strong>Status:</strong> {app.status}</p>
-                  <p><strong>Resume:</strong></p>
+
+                  {app.resumePath && (
+                    <p>
+                      <strong>Resume:</strong>{" "}
+                      <a
+                        href={`http://localhost:1305/${app.resumePath}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        View
+                      </a>
+                    </p>
+                  )}
                 </div>
 
                 <div className="app-right">
-
-                  {(!app.status || app.status === "Pending") && (
+                  {(app.status === "PENDING" || !app.status) && (
                     <>
                       <button
                         className="quick-action primary"
-                        onClick={() => updateStatus(app.id, "Approved")}
+                        onClick={() => updateStatus(app.id, "APPROVED")}
                       >
                         Approve
                       </button>
 
                       <button
                         className="quick-action secondary"
-                        onClick={() => updateStatus(app.id, "Rejected")}
+                        onClick={() => updateStatus(app.id, "REJECTED")}
                       >
                         Reject
                       </button>
                     </>
                   )}
 
-                  {app.status === "Approved" && (
+                  {app.status === "APPROVED" && (
                     <div
                       style={{
                         background: "#d4edda",
@@ -122,7 +158,7 @@ const Applications = () => {
                     </div>
                   )}
 
-                  {app.status === "Rejected" && (
+                  {app.status === "REJECTED" && (
                     <div
                       style={{
                         background: "#f8d7da",
@@ -135,7 +171,6 @@ const Applications = () => {
                       ❌ Rejected
                     </div>
                   )}
-
                 </div>
               </div>
             ))

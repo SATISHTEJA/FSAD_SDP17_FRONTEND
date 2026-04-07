@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import HeaderforStudent from "../Components/HeaderforStudent";
+import Loader from "../Components/Loader";
 import "../Styles/Dashboard.css";
 import {
   LayoutDashboard,
@@ -17,33 +18,48 @@ import {
 
 const BrowseInternships = () => {
   const navigate = useNavigate();
-
   const [internships, setInternships] = useState([]);
   const [search, setSearch] = useState("");
   const [showApplyModal, setShowApplyModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedIntern, setSelectedIntern] = useState(null);
   const [appliedIds, setAppliedIds] = useState([]);
-
+  const [loading, setLoading] = useState(true);
+  const student = JSON.parse(localStorage.getItem("studentProfile"));
+  const userId = student?.id;
   const [form, setForm] = useState({
-    name: "",
-    email: "",
+    name: student?.name || "",
+    email: student?.email || "",
     role: "Student",
-    organization: "",
+    organization: student?.university || "",
     gpa: "",
     resume: null,
     resumeName: "",
   });
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("internships")) || [];
-    setInternships(stored);
+    setLoading(true);
 
-    const applied =
-      JSON.parse(localStorage.getItem("appliedInternships")) || [];
-    setAppliedIds(applied);
+    fetch("http://localhost:1305/api/internships/all")
+      .then((res) => res.json())
+      .then(async (data) => {
+        setInternships(data);
+        const appliedList = [];
+        for (let intern of data) {
+          const res = await fetch(
+            `http://localhost:1305/api/applications/check?studentId=${userId}&internshipId=${intern.id}`
+          );
+          const isApplied = await res.json();
+          if (isApplied) appliedList.push(intern.id);
+        }
+        setAppliedIds(appliedList);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
   }, []);
-
   const filteredInternships = internships.filter((intern) =>
     intern.title?.toLowerCase().includes(search.toLowerCase())
   );
@@ -52,18 +68,14 @@ const BrowseInternships = () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setForm({
-        ...form,
-        resume: reader.result,
-        resumeName: file.name,
-      });
-    };
-    reader.readAsDataURL(file);
+    setForm({
+      ...form,
+      resume: file,
+      resumeName: file.name,
+    });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!form.name || !form.email || !form.organization) {
       alert("Please fill all required fields.");
       return;
@@ -74,52 +86,78 @@ const BrowseInternships = () => {
       return;
     }
 
-    const newApplication = {
-      id: Date.now(),
-      internshipId: selectedIntern.id,
-      internshipTitle: selectedIntern.title,
-      name: form.name,
-      email: form.email,
-      role: form.role,
-      organization: form.organization,
-      gpa: form.role === "Student" ? form.gpa : null,
-      resume: form.resume || null,
-      resumeName: form.resumeName || "",
-      status: "Pending",
-    };
+    const formData = new FormData();
+    formData.append("fullName", form.name);
+    formData.append("email", form.email);
+    formData.append("role", form.role);
+    formData.append("university", form.organization);
+    formData.append("gpa", form.gpa || "");
+    formData.append("userId", userId);
+    formData.append("internshipId", selectedIntern.id);
 
-    const existing =
-      JSON.parse(localStorage.getItem("applications")) || [];
+    if (form.resume) {
+      formData.append("resume", form.resume);
+    }
 
-    localStorage.setItem(
-      "applications",
-      JSON.stringify([newApplication, ...existing])
-    );
+    try {
+      const res = await fetch(
+        "http://localhost:1305/api/applications/apply",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
-    const updatedApplied = [...appliedIds, selectedIntern.id];
-    localStorage.setItem(
-      "appliedInternships",
-      JSON.stringify(updatedApplied)
-    );
-    setAppliedIds(updatedApplied);
+      if (!res.ok) throw new Error("Failed");
 
-    alert("Application submitted successfully!");
-    setShowApplyModal(false);
+      alert("Application submitted successfully!");
 
-    setForm({
-      name: "",
-      email: "",
-      role: "Student",
-      organization: "",
-      gpa: "",
-      resume: null,
-      resumeName: "",
-    });
+      setAppliedIds([...appliedIds, selectedIntern.id]);
+      setShowApplyModal(false);
+      
+      setForm({
+        name: "",
+        email: "",
+        role: "Student",
+        organization: "",
+        gpa: "",
+        resume: null,
+        resumeName: "",
+      });
+
+    } catch (error) {
+      console.error(error);
+      alert("Error submitting application");
+    }
+  };
+  const handleResumeUpload = (file) => {
+    const maxSize = 5 * 1024 * 1024;
+
+    if (file.size > maxSize) {
+      alert("Resume must be less than 5MB");
+      return;
+    }
+
+    const allowedTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      alert("Only PDF or Word files allowed");
+      return;
+    }
+
+    setForm((prev) => ({
+      ...prev,
+      resume: file,
+      resumeName: file.name,
+    }));
   };
 
   return (
     <>
-      <HeaderforStudent />
 
       <div className="admin-layout" style={{ paddingTop: "70px" }}>
         <aside className="admin-sidebar">
@@ -152,58 +190,63 @@ const BrowseInternships = () => {
           <div className="page-header">
             <h1>Browse Internships</h1>
           </div>
+
           <div className="browse-search-box">
-  <Search size={18} />
-  <input
-    type="text"
-    placeholder="Search by title..."
-    value={search}
-    onChange={(e) => setSearch(e.target.value)}
-  />
-</div>
+            <Search size={18} />
+            <input
+              type="text"
+              placeholder="Search by title..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
 
-          {filteredInternships.map((intern) => (
-            <div key={intern.id} className="browse-card">
-              <div>
-                <h3>{intern.title}</h3>
-                <div className="browse-meta">
-                  <span><MapPin size={16}/> {intern.location}</span>
-                  <span><Clock size={16}/> {intern.duration}</span>
-                  <span><DollarSign size={16}/> {intern.stipend}</span>
+          {loading ? (
+            <Loader />
+          ) : (
+            filteredInternships.map((intern) => (
+              <div key={intern.id} className="browse-card">
+                <div>
+                  <h3>{intern.title}</h3>
+                  <div className="browse-meta">
+                    <span><MapPin size={16} /> {intern.location}</span>
+                    <span><Clock size={16} /> {intern.duration}</span>
+                    <span><DollarSign size={16} /> {intern.stipend}</span>
+                  </div>
+                  <p>{intern.description}</p>
                 </div>
-                <p>{intern.description}</p>
-              </div>
 
-              <div style={{ display: "flex", gap: "10px" }}>
-                {appliedIds.includes(intern.id) ? (
-                  <button className="apply-btn" style={{ background: "green" }} disabled>
-                    Applied
-                  </button>
-                ) : (
+                <div style={{ display: "flex", gap: "10px" }}>
+                  {appliedIds.includes(intern.id) ? (
+                    <button className="apply-btn" style={{ background: "green" }} disabled>
+                      Applied
+                    </button>
+                  ) : (
+                    <button
+                      className="apply-btn"
+                      onClick={() => {
+                        setSelectedIntern(intern);
+                        setShowApplyModal(true);
+                      }}
+                    >
+                      Apply Now
+                    </button>
+                  )}
+
                   <button
-                    className="apply-btn"
+                    className="view-button"
                     onClick={() => {
                       setSelectedIntern(intern);
-                      setShowApplyModal(true);
+                      setShowDetailsModal(true);
                     }}
                   >
-                    Apply Now
+                    View Details
                   </button>
-                )}
-
-                <button
-                  className="view-btn"
-                  onClick={() => {
-                    setSelectedIntern(intern);
-                    setShowDetailsModal(true);
-                  }}
-                >
-                  View Details
-                </button>
+                </div>
               </div>
-            </div>
-          ))}
-
+            ))
+          )}
+          {/* APPLY MODAL */}
           {showApplyModal && selectedIntern && (
             <div className="modal-overlay">
               <div className="modal-container">
@@ -229,70 +272,93 @@ const BrowseInternships = () => {
                 <select
                   value={form.role}
                   onChange={(e) =>
-                    setForm({ ...form, role: e.target.value, organization: "" })
+                    setForm({ ...form, role: e.target.value })
                   }
                 >
                   <option value="Student">Student</option>
                   <option value="Employee">Employee</option>
                 </select>
 
-                <div className="apply-modal-row">
-                  <div className="apply-modal-col organization-col">
-                    <label>
-                      {form.role === "Student"
-                        ? "University / College Name *"
-                        : "Company Name *"}
-                    </label>
+                <label>Organization *</label>
+                <input
+                  value={form.organization}
+                  onChange={(e) =>
+                    setForm({ ...form, organization: e.target.value })
+                  }
+                />
+
+                {form.role === "Student" && (
+                  <>
+                    <label>CGPA/Percentage</label>
                     <input
-                      value={form.organization}
+                      value={form.gpa}
                       onChange={(e) =>
-                        setForm({ ...form, organization: e.target.value })
+                        setForm({ ...form, gpa: e.target.value })
                       }
                     />
-                  </div>
-
-                  {form.role === "Student" && (
-                    <div className="apply-modal-col gpa-col">
-                      <label>GPA</label>
-                      <input
-                        value={form.gpa}
-                        onChange={(e) =>
-                          setForm({ ...form, gpa: e.target.value })
-                        }
-                      />
-                    </div>
+                  </>
+                )}
+                <label>Upload Resume*</label>
+                <div
+                  style={{
+                    border: "2px dashed #ccc",
+                    padding: "15px",
+                    borderRadius: "10px",
+                    textAlign: "center",
+                    marginTop: "10px",
+                    cursor: "pointer",
+                  }}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    const file = e.dataTransfer.files[0];
+                    if (file) {
+                      handleResumeUpload(file);
+                    }
+                  }}
+                  onClick={() => document.getElementById("resumeInput").click()}
+                >
+                  <p style={{ fontSize: "13px", color: "#6b7280" }}>
+                    Drag & Drop Resume or Click to Upload
+                  </p>
+                  <input
+                    id="resumeInput"
+                    type="file"
+                    accept=".pdf,.doc,.docx"
+                    style={{ display: "none" }}
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) handleResumeUpload(file);
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      document.getElementById("resumeInput").click();
+                    }}
+                  >
+                    Choose File
+                  </button>
+                  {form.resumeName && (
+                    <p style={{ marginTop: "10px", fontWeight: "500" }}>
+                      📄 {form.resumeName}
+                    </p>
                   )}
                 </div>
-
-                <label>
-                  Upload Resume* {form.role === "Employee"}
-                </label>
-                <input type="file" onChange={handleFileUpload} />
-
-                {form.resumeName && (
-                  <p className="resume-name">Selected: {form.resumeName}</p>
-                )}
-
                 <div className="modal-actions">
-                  <button
-                    className="cancel-btn"
-                    onClick={() => setShowApplyModal(false)}
-                  >
+                  <button onClick={() => setShowApplyModal(false)}>
                     Cancel
                   </button>
-
-                  <button
-                    className="submit-btn"
-                    onClick={handleSubmit}
-                  >
+                  <button onClick={handleSubmit}>
                     Submit Application
                   </button>
                 </div>
-
               </div>
             </div>
           )}
 
+          {/* DETAILS MODAL */}
           {showDetailsModal && selectedIntern && (
             <div className="modal-overlay">
               <div className="modal-container">
@@ -302,7 +368,7 @@ const BrowseInternships = () => {
                 </div>
 
                 <p><strong>Title:</strong> {selectedIntern.title}</p>
-                <p><strong>Company:</strong> {selectedIntern.company}</p>
+                <p><strong>Company:</strong> {selectedIntern.companyname}</p>
                 <p><strong>Location:</strong> {selectedIntern.location}</p>
                 <p><strong>Duration:</strong> {selectedIntern.duration}</p>
                 <p><strong>Stipend:</strong> {selectedIntern.stipend}</p>

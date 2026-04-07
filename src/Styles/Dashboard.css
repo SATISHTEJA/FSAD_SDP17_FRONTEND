@@ -74,6 +74,11 @@
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
 }
+.stats-grid-tp { 
+  display: grid;
+  grid-template-columns:  1fr;
+  gap: 20px;
+}
 
 .stat-card {
   display: flex;
@@ -96,6 +101,24 @@
   margin-top: 8px;
   font-size: 30px;
 }
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.status-badge.PENDING {
+  background: #fef9c3;
+  color: #92400e;
+}
+.status-badge.APPROVED {
+  background: #aee2c0;
+  color: #298dbb;
+}
+.status-badge.REJECTED {
+  background: #fee2e2;
+  color: #991b1b;
+}
 
 .stat-icon.blue { color: #2563eb; }
 .stat-icon.orange { color: #f97316; }
@@ -110,6 +133,7 @@
   border-radius: 16px;
   border: 1px solid #e5e7eb;
   margin-bottom: 30px;
+  transition: all 0.3s ease;
 }
 
 .dashboard-card h2 {
@@ -484,7 +508,7 @@
   cursor: pointer;
 }
 
-.view-btn{
+.view-button{
   text-decoration: none;
   background-color: #f6f7f9;
   border-radius: 5px;
@@ -492,9 +516,9 @@
   text-align: right;
   cursor: pointer;
 }
-.view-btn:hover{
+.view-button:hover {
+  background-color: #f7f4f4;
   color: red;
-
 }
 
 .browse-page .apply-modal-row {
@@ -534,4 +558,461 @@
 .headerloname{
   text-decoration: none;
   cursor: pointer;
+}
+
+.skill-chip {
+  background: #e0e7ff;
+  color: #1e3a8a;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+/* ============================= */
+/* MyTasks Modal (Scoped Only)   */
+/* ============================= */
+
+.mytasks-modal {
+  backdrop-filter: blur(4px);
+}
+
+.mytasks-modal .modal-container {
+  width: 420px;
+  max-width: 90%;
+  padding: 28px;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  animation: popupFade 0.25s ease;
+}
+
+/* Title */
+.mytasks-modal-box h3 {
+  margin-bottom: 8px;
+  font-size: 20px;
+}
+
+/* Task name */
+.mytasks-modal-box p {
+  color: #6b7280;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+/* Textarea */
+.mytasks-modal-box textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  margin-bottom: 14px;
+  font-size: 14px;
+}
+
+.mytasks-modal-box textarea:focus {
+  outline: none;
+  border-color: #4f46e5;
+}
+
+/* File input */
+.mytasks-modal-box input[type="file"] {
+  margin-bottom: 12px;
+}
+
+/* Existing file text */
+.mytasks-modal-box p strong {
+  color: #111827;
+}
+
+/* Buttons */
+.mytasks-modal-box .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.mytasks-modal-box .modal-actions button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+}
+
+/* Cancel */
+.mytasks-modal-box .modal-actions button:first-child {
+  background: #e5e7eb;
+}
+
+/* Submit / Update */
+.mytasks-modal-box .modal-actions button:last-child {
+  background: #4f46e5;
+  color: white;
+}
+
+.mytasks-modal-box .modal-actions button:last-child:hover {
+  background: #4338ca;
+}
+
+/* Animation */
+@keyframes popupFade {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ========================= */
+/* FIX: Evaluation UI        */
+/* ========================= */
+
+.evaluation-item {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 15px;
+  transition: 0.2s ease;
+}
+
+.evaluation-item:hover {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.evaluation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sub-text {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.evaluation-header span {
+  background: #fff7ed;
+  color: #ea580c;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.delete-btn {
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background: #b91c1c;
+}
+
+.task-text {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #374151;
+}
+
+.feedback-box {
+  margin-top: 10px;
+  background: #f9fafb;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.date-text {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.submission-box {
+  margin-top: 15px;
+  padding: 15px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #f9fafb;
+}
+
+.download-btn {
+  display: inline-block;
+  padding: 8px 14px;
+  background: #2563eb;
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.primary-btn {
+  background: #2563eb;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.secondary-btn {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.quick-actions-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+/* PROFILE HEADER */
+/* ========================= */
+/* 🔥 PROFILE PAGE MODERN UI */
+/* ========================= */
+
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.profile-header h1 {
+  font-size: 26px;
+  font-weight: 600;
+}
+
+.profile-header p {
+  color: #6b7280;
+}
+
+.profile-container {
+  display: flex;
+  gap: 25px;
+  flex-wrap: wrap;
+}
+
+.profile-card {
+  background: #ffffff;
+  padding: 30px 20px;
+  border-radius: 18px;
+  text-align: center;
+  width: 260px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  transition: 0.3s;
+}
+
+.profile-card:hover {
+  transform: translateY(-5px);
+}
+
+.profile-card img {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 12px;
+  border: 3px solid #e0e7ff;
+}
+
+.profile-card h2 {
+  margin: 10px 0 5px;
+  font-size: 20px;
+}
+
+.profile-card p {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.profile-details {
+  flex: 1;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 18px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.profile-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.profile-row label {
+  font-weight: 500;
+  color: #374151;
+}
+
+.profile-row span {
+  color: #111827;
+}
+
+.profile-row input {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  width: 200px;
+}
+
+.dashboard-card {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 18px;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 25px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+  transition: 0.3s;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-3px);
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: white;
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.primary-btn:hover {
+  transform: scale(1.05);
+}
+
+.skill-chip {
+  background: #e0e7ff;
+  color: #1e3a8a;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  display: inline-block;
+  margin: 5px 6px 0 0;
+}
+
+.view-btn {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 8px 14px;
+  background: #10b981;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.view-btn:hover {
+  background: #059669;
+}
+
+/* ✅ SAFE LOADER (NO IMPACT ON EXISTING CSS) */
+.loader-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: rgba(255, 255, 255, 0.6); /* optional overlay */
+  z-index: 9999;
+}
+
+/* SVG size */
+.loader-svg {
+  width: 70px;
+  height: 70px;
+  animation: rotate 1.2s linear infinite;
+}
+
+/* Common arc style */
+.arc {
+  stroke-dasharray: 90 150; /* creates arc */
+  transform-origin: center;
+}
+
+/* Individual colors */
+.arc1 {
+  stroke: #0b7cf5;
+}
+
+.arc2 {
+  stroke: #0b7cf5;
+  transform: rotate(120deg);
+}
+
+.arc3 {
+  stroke: #44bfef;
+  transform: rotate(240deg);
+}
+
+/* Rotation animation */
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.logout-btn {
+  color: black;
+  cursor: pointer;
+}
+.logout-btn:hover {
+  color: red;
+}
+/* ✅ GLOBAL SELECT FIX (safe) */
+select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  font-size: 14px;
+  color: #111827;
+  cursor: pointer;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+/* Hover */
+select:hover {
+  border-color: #2563eb;
+}
+
+/* Focus */
+select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+/* Arrow (same style you used already) */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%236b7280' height='20' viewBox='0 0 20 20' width='20'><path d='M5 7l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
 }

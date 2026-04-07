@@ -15,7 +15,7 @@ const Mentor = () => {
 
       <div style={styles.page}>
         <div style={styles.card}>
-          
+
           {/* TITLE */}
           <h1 style={styles.title}>Mentor Feedback</h1>
 

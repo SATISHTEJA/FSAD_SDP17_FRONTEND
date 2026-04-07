@@ -25,30 +25,75 @@ const Login = () => {
     }
   }, [navigate]);
 
-  const handleLogin = () => {
-
-    if (
-      role === "admin" &&
-      email === "admin@gmail.com" &&
-      password === "admin123"
-    ) {
-      localStorage.setItem("role", "admin");
-      localStorage.setItem("isLoggedIn", "true");
-      navigate("/admin-dashboard");
+  const handleLogin = async () => {
+    if (!email || !password) {
+      alert("Please enter email and password");
       return;
     }
 
-    if (
-      role === "student" &&
-      email === "student@gmail.com" &&
-      password === "1234"
-    ) {
-      localStorage.setItem("role", "student");
+    try {
+      const response = await fetch("http://localhost:1305/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+          role: role,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Invalid credentials");
+        return;
+      }
       localStorage.setItem("isLoggedIn", "true");
-      navigate("/student-dashboard");
-      return;
+      localStorage.setItem("role", role);
+
+      if (role === "student") {
+        const safeProfile = {
+          id: data.id,
+          name: data.name,
+          email: data.email,
+          university: data.university,
+          stream: data.stream,
+          branch: data.branch,
+          joiningyear: data.joiningyear,
+          graduatedyear: data.graduatedyear,
+          phone: data.phone,
+          skills: data.skills,
+          links: data.links,
+          resume: data.resume,
+          image: null,
+        };
+
+        localStorage.setItem(
+          "studentProfile",
+          JSON.stringify(safeProfile)
+        );
+
+        navigate("/student-dashboard");
+
+      } else if (role === "admin") {
+        localStorage.setItem(
+          "adminProfile",
+          JSON.stringify({
+            id: data.id,
+            name: data.name,
+            email: data.email,
+          })
+        );
+
+        navigate("/admin-dashboard");
+      }
+
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Backend Is not running");
     }
-    alert("Invalid credentials or role mismatch!");
   };
 
   return (
@@ -61,14 +106,22 @@ const Login = () => {
         <div className="role-switch">
           <button
             className={role === "student" ? "active" : ""}
-            onClick={() => {setRole("student");setEmail("");setPassword("")}}
+            onClick={() => {
+              setRole("student");
+              setEmail("");
+              setPassword("");
+            }}
           >
             Student
           </button>
 
           <button
             className={role === "admin" ? "active" : ""}
-            onClick={() => {setRole("admin");setEmail("");setPassword("")}}
+            onClick={() => {
+              setRole("admin");
+              setEmail("");
+              setPassword("");
+            }}
           >
             Admin
           </button>
@@ -101,14 +154,6 @@ const Login = () => {
         <button className="login-btn" onClick={handleLogin}>
           LOGIN
         </button>
-
-        <p style={{ fontSize: "12px", marginTop: "10px" }}>
-          Demo:<br />
-          Admin → admin@gmail.com / admin123 <br />
-          Student → student@gmail.com / 1234
-        </p>
-
-        <br />
 
         <Link to="/Forgetpass" className="forgot">
           Forgot Password?

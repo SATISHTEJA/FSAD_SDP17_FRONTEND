@@ -15,7 +15,6 @@ const PageNavigation = ({ current }) => {
 
   const currentIndex = pages.indexOf(current);
 
-  // 👉 NEXT
   const goNext = () => {
     if (currentIndex < pages.length - 1) {
       navigate(pages[currentIndex + 1]);
@@ -24,7 +23,6 @@ const PageNavigation = ({ current }) => {
     }
   };
 
-  // 👉 PREVIOUS
   const goPrev = () => {
     if (currentIndex > 0) {
       navigate(pages[currentIndex - 1]);

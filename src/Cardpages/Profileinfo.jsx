@@ -11,7 +11,7 @@ const Profile = () => {
   return (
     <>
       <Cpheader />
-      <PageNavigation current="/profileinfo" />
+      <PageNavigation current="/profileinfo"/>
 
       <div style={styles.page}>
         <div style={styles.card}>

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Headerfordash from "../Components/Headerfordash";
+import Loader from "../Components/Loader";
 import "../Styles/Dashboard.css";
 import {
   FileText,
   Users,
   User,
-  UserCheck,
   TrendingUp,
   LayoutDashboard,
   ClipboardCheck,
@@ -15,61 +15,132 @@ import {
 const Evaluations = () => {
   const navigate = useNavigate();
 
-  const [approvedInterns, setApprovedInterns] = useState([]);
-  const [selectedInternEmail, setSelectedInternEmail] = useState("");
+  const loggedEmployer = JSON.parse(localStorage.getItem("adminProfile"));
+  const employerId = loggedEmployer?.id;
+
+  const [loading, setLoading] = useState(false);
+  const [evaluatedTasks, setEvaluatedTasks] = useState([]);
+  const [recentEvaluations, setRecentEvaluations] = useState([]);
+
+  const [internships, setInternships] = useState([]);
+  const [selectedInternship, setSelectedInternship] = useState("");
+
+  const [students, setStudents] = useState([]);
+  const [selectedStudent, setSelectedStudent] = useState("");
+
+  const [tasks, setTasks] = useState([]);
+  const [selectedTask, setSelectedTask] = useState("");
+
   const [rating, setRating] = useState(0);
   const [technical, setTechnical] = useState("");
   const [communication, setCommunication] = useState("");
   const [workEthic, setWorkEthic] = useState("");
   const [strengths, setStrengths] = useState("");
   const [improvements, setImprovements] = useState("");
-  const [evaluations, setEvaluations] = useState([]);
 
+  // 🔹 Load internships
   useEffect(() => {
-    const apps = JSON.parse(localStorage.getItem("applications")) || [];
-
-    const approved = apps.filter(
-      (app) => app.status === "Approved"
-    );
-
-    setApprovedInterns(approved);
-
-    const storedEvaluations =
-      JSON.parse(localStorage.getItem("evaluations")) || [];
-    setEvaluations(storedEvaluations);
-  }, []);
-
-  const handleSubmit = () => {
-    if (!selectedInternEmail || rating === 0) {
-      alert("Please select intern and give rating.");
-      return;
-    }
-
-    const selectedIntern = approvedInterns.find(
-      (intern) => intern.email === selectedInternEmail
-    );
-
-    const newEvaluation = {
-      id: Date.now(),
-      internName: selectedIntern?.name,
-      internEmail: selectedInternEmail,
-      rating,
-      technical,
-      communication,
-      workEthic,
-      strengths,
-      improvements,
-      createdAt: new Date().toISOString(),
+    const fetchInternships = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(
+          `http://localhost:1305/api/internships/employer/${employerId}`
+        );
+        const data = await res.json();
+        setInternships(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error(err);
+      }
+      setLoading(false);
     };
 
-    const updated = [newEvaluation, ...evaluations];
+    if (employerId) fetchInternships();
+  }, [employerId]);
 
-    setEvaluations(updated);
-    localStorage.setItem("evaluations", JSON.stringify(updated));
+  // 🔹 Internship change
+  const handleInternshipChange = async (id) => {
+    setSelectedInternship(id);
 
-    alert("Evaluation submitted successfully!");
+    setStudents([]);
+    setTasks([]);
+    setSelectedStudent("");
+    setSelectedTask("");
+    setRecentEvaluations([]);
 
-    setSelectedInternEmail("");
+    if (!id) return;
+
+    setLoading(true);
+
+    try {
+      const res = await fetch(
+        `http://localhost:1305/api/applications/internship/${id}`
+      );
+      const data = await res.json();
+
+      const approved = data.filter(
+        (app) => app.status === "APPROVED"
+      );
+
+      setStudents(approved);
+    } catch (err) {
+      console.error(err);
+    }
+
+    setLoading(false);
+  };
+
+  // 🔹 Student change
+  const handleStudentChange = async (studentId) => {
+    setSelectedStudent(studentId);
+
+    setTasks([]);
+    setSelectedTask("");
+    setRecentEvaluations([]);
+
+    if (!studentId || !selectedInternship) return;
+
+    setLoading(true);
+
+    try {
+      // Tasks
+      const res = await fetch(
+        `http://localhost:1305/api/tasks/student/${studentId}/internship/${selectedInternship}`
+      );
+      const data = await res.json();
+
+      const safeTasks = Array.isArray(data) ? data : [];
+      setTasks(safeTasks);
+
+      // Evaluations
+      const evalRes = await fetch(
+        `http://localhost:1305/api/evaluations/student/${studentId}`
+      );
+      const evalData = await evalRes.json();
+
+      console.log("EVALUATIONS:", evalData);
+
+      const safeEval = Array.isArray(evalData) ? evalData : [];
+      setRecentEvaluations(safeEval);
+
+      const evaluatedIds = safeEval.map(
+        (e) => e.taskId || e.task?.id
+      );
+
+      setEvaluatedTasks(evaluatedIds);
+    } catch (err) {
+      console.error(err);
+    }
+
+    setLoading(false);
+  };
+
+  const handleClear = () => {
+    setSelectedInternship("");
+    setSelectedStudent("");
+    setSelectedTask("");
+    setStudents([]);
+    setTasks([]);
+    setRecentEvaluations([]);
     setRating(0);
     setTechnical("");
     setCommunication("");
@@ -78,118 +149,156 @@ const Evaluations = () => {
     setImprovements("");
   };
 
-  const totalEvaluations = evaluations.length;
+  // 🔹 Submit
+  const handleSubmit = async () => {
+    if (
+      !selectedTask ||
+      rating === 0 ||
+      !technical ||
+      !communication ||
+      !workEthic
+    ) {
+      alert("Please fill all required fields");
+      return;
+    }
 
-  const avgRating =
-    totalEvaluations === 0
-      ? 0
-      : (
-          evaluations.reduce((a, b) => a + b.rating, 0) /
-          totalEvaluations
-        ).toFixed(1);
+    if (evaluatedTasks.includes(Number(selectedTask))) {
+      alert("This task is already evaluated!");
+      return;
+    }
 
-  const outstanding = evaluations.filter(
-    (e) => e.rating >= 4
-  ).length;
+    setLoading(true);
+
+    try {
+      await fetch(
+        "http://localhost:1305/api/evaluations/evaluate",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            studentId: selectedStudent,
+            taskId: selectedTask,
+            rating,
+            technical,
+            communication,
+            workEthic,
+            strengths,
+            improvements,
+            feedback: "Good work",
+          }),
+        }
+      );
+
+      alert("Evaluation submitted!");
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+    }
+
+    setLoading(false);
+  };
 
   return (
     <>
-      <Headerfordash />
-
       <div className="admin-layout" style={{ paddingTop: "70px" }}>
-        {/* SIDEBAR */}
         <aside className="admin-sidebar">
           <button onClick={() => navigate("/admin-dashboard")}>
-            <LayoutDashboard size={18} />
-            Dashboard
+            <LayoutDashboard size={18} /> Dashboard
           </button>
 
           <button onClick={() => navigate("/post-internship")}>
-            <FileText size={18} />
-            Post Internship
+            <FileText size={18} /> Post Internship
           </button>
 
           <button onClick={() => navigate("/applications")}>
-            <Users size={18} />
-            Applications
+            <Users size={18} /> Applications
           </button>
 
           <button onClick={() => navigate("/track-progress")}>
-            <TrendingUp size={18} />
-            Track Progress
+            <TrendingUp size={18} /> Track Progress
           </button>
 
-          <button
-            className="active"
-            onClick={() => navigate("/evaluations")}
-          >
-            <ClipboardCheck size={18} />
-            Evaluations
+          <button className="active">
+            <ClipboardCheck size={18} /> Evaluations
           </button>
 
           <button onClick={() => navigate("/admin-profile")}>
-            <User size={18} />
-            Profile
+            <User size={18} /> Profile
           </button>
         </aside>
 
-        {/* MAIN */}
         <main className="admin-main">
+          {loading && <Loader />}
 
-          <div className="page-header">
-            <h1>Intern Evaluations</h1>
-            <p>
-              Provide feedback and performance evaluations for interns.
-            </p>
-          </div>
-
-          {/* ===== STATS ===== */}
-          <section className="stats-grid">
-            <div className="stat-card">
-              <div>
-                <p>Total Evaluations</p>
-                <h3>{totalEvaluations}</h3>
-              </div>
-              <ClipboardCheck size={30} />
-            </div>
-
-            <div className="stat-card">
-              <div>
-                <p>Average Rating</p>
-                <h3>{avgRating}/5</h3>
-              </div>
-              <TrendingUp size={30} />
-            </div>
-
-            <div className="stat-card">
-              <div>
-                <p>Outstanding Interns</p>
-                <h3>{outstanding}</h3>
-              </div>
-              <UserCheck size={30} />
-            </div>
-          </section>
-
-          {/* ===== FORM ===== */}
           <div className="form-card">
-            <h2>Create New Evaluation</h2>
+            <h2>Create Evaluation</h2>
 
-            <label>Select Intern *</label>
+            {/* Internship */}
+            <label>Select Internship</label>
             <select
-              value={selectedInternEmail}
+              value={selectedInternship}
               onChange={(e) =>
-                setSelectedInternEmail(e.target.value)
+                handleInternshipChange(e.target.value)
               }
             >
-              <option value="">Choose an intern</option>
-
-              {approvedInterns.map((intern) => (
-                <option key={intern.id} value={intern.email}>
-                  {intern.name} ({intern.email})
+              <option value="">Choose internship</option>
+              {internships.map((i) => (
+                <option key={i.id} value={i.id}>
+                  {i.title}
                 </option>
               ))}
             </select>
 
+            {/* Student */}
+            <label>Select Student</label>
+            <select
+              disabled={!selectedInternship}
+              value={selectedStudent}
+              onChange={(e) =>
+                handleStudentChange(e.target.value)
+              }
+            >
+              <option value="">Choose student</option>
+              {students.map((s) => (
+                <option key={s.id} value={s.student?.id}>
+                  {s.student?.fullName || s.fullName}
+                </option>
+              ))}
+            </select>
+
+            {/* Task */}
+            <label>Select Task</label>
+            <select
+              disabled={!selectedStudent}
+              value={selectedTask}
+              onChange={(e) =>
+                setSelectedTask(e.target.value)
+              }
+            >
+              <option value="">Choose task</option>
+
+              {tasks
+                .filter(
+                  (t) =>
+                    t.status?.toUpperCase() === "COMPLETED"
+                )
+                .map((t) => {
+                  const isEvaluated = evaluatedTasks.includes(t.id);
+
+                  return (
+                    <option
+                      key={t.id}
+                      value={t.id}
+                      disabled={isEvaluated}
+                    >
+                      {t.title}{" "}
+                      {isEvaluated ? "✅ (Evaluated)" : ""}
+                    </option>
+                  );
+                })}
+            </select>
+
+            {/* Rating */}
             <label>Overall Rating *</label>
             <div className="star-rating">
               {[1, 2, 3, 4, 5].map((star) => (
@@ -206,12 +315,7 @@ const Evaluations = () => {
             </div>
 
             <div className="three-cols">
-              <select
-                value={technical}
-                onChange={(e) =>
-                  setTechnical(e.target.value)
-                }
-              >
+              <select value={technical} onChange={(e) => setTechnical(e.target.value)}>
                 <option value="">Technical Skills</option>
                 <option>Excellent</option>
                 <option>Good</option>
@@ -219,12 +323,7 @@ const Evaluations = () => {
                 <option>Poor</option>
               </select>
 
-              <select
-                value={communication}
-                onChange={(e) =>
-                  setCommunication(e.target.value)
-                }
-              >
+              <select value={communication} onChange={(e) => setCommunication(e.target.value)}>
                 <option value="">Communication</option>
                 <option>Excellent</option>
                 <option>Good</option>
@@ -232,12 +331,7 @@ const Evaluations = () => {
                 <option>Poor</option>
               </select>
 
-              <select
-                value={workEthic}
-                onChange={(e) =>
-                  setWorkEthic(e.target.value)
-                }
-              >
+              <select value={workEthic} onChange={(e) => setWorkEthic(e.target.value)}>
                 <option value="">Work Ethic</option>
                 <option>Excellent</option>
                 <option>Good</option>
@@ -247,63 +341,51 @@ const Evaluations = () => {
             </div>
 
             <textarea
-              placeholder="Key Strengths"
+              placeholder="Strengths"
               value={strengths}
-              onChange={(e) =>
-                setStrengths(e.target.value)
-              }
+              onChange={(e) => setStrengths(e.target.value)}
             />
 
             <textarea
-              placeholder="Areas for Improvement"
+              placeholder="Improvements"
               value={improvements}
-              onChange={(e) =>
-                setImprovements(e.target.value)
-              }
+              onChange={(e) => setImprovements(e.target.value)}
             />
 
-            <div className="quick-actions-row">
-              <button
-                className="primary-btn"
-                onClick={handleSubmit}
-              >
-                Submit Evaluation
-              </button>
+            <button className="primary-btn" onClick={handleSubmit}>
+              Submit Evaluation
+            </button>
 
-              <button
-                className="secondary-btn"
-                onClick={() =>
-                  navigate("/admin-dashboard")
-                }
-              >
-                Cancel
-              </button>
-            </div>
+            <button className="view-button" onClick={handleClear}>
+              Clear
+            </button>
           </div>
 
-          <div className="dashboard-card">
-            <h2>Recent Evaluations</h2>
+          {/* ✅ RECENT EVALUATIONS */}
+          <div style={{ marginTop: "20px" }}>
+            <h3>Recent Evaluations</h3>
 
-            {evaluations.length === 0 ? (
-              <p>No evaluations yet.</p>
+            {!selectedStudent ? (
+              <p style={{ color: "#6b7280" }}>
+                Select a student to view evaluations
+              </p>
+            ) : recentEvaluations.length === 0 ? (
+              <p>No evaluations found</p>
             ) : (
-              evaluations.slice(0, 3).map((item) => (
-                <div
-                  key={item.id}
-                  className="evaluation-card"
-                >
-                  <h3>{item.internName}</h3>
-                  <strong>⭐ {item.rating}/5</strong>
-                  <p>
-                    Technical: {item.technical} | Communication:{" "}
-                    {item.communication} | Work Ethic:{" "}
-                    {item.workEthic}
-                  </p>
-                </div>
-              ))
+              recentEvaluations
+                .slice()
+                .reverse()
+                .map((evalItem, index) => (
+                  <div key={index} className="dashboard-card">
+                    <h4>{evalItem.task?.title || "Task"}</h4>
+                    <p>⭐ Rating: {evalItem.rating}</p>
+                    <p><strong>Technical:</strong> {evalItem.technical}</p>
+                    <p><strong>Communication:</strong> {evalItem.communication}</p>
+                    <p><strong>Work Ethic:</strong> {evalItem.workEthic}</p>
+                  </div>
+                ))
             )}
           </div>
-
         </main>
       </div>
     </>

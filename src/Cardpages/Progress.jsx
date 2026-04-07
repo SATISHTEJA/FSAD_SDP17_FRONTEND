@@ -11,7 +11,7 @@ const Progress = () => {
   return (
     <>
       <Cpheader />
-      <PageNavigation current="/progress" />
+      <PageNavigation current="/progress"/>
 
       <div
         style={{

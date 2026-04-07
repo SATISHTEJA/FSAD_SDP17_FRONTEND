@@ -11,7 +11,7 @@ const Pio = () => {
   return (
     <>
       <Cpheader />
-      <PageNavigation current="/pio" />
+      <PageNavigation current="/pio"/>
 
       <div
         style={{

@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import HeaderforStudent from "../Components/HeaderforStudent";
+import Loader from "../Components/Loader"; // ✅ added
 import "../Styles/Dashboard.css";
 import {
   LayoutDashboard,
   Search,
   FileText,
-  CheckSquare,
-  MessageSquare,ClipboardList,
+  ClipboardList,
+  MessageSquare,
   Star,
   User,
   TrendingUp,
@@ -21,20 +22,29 @@ const Feedback = () => {
     JSON.parse(localStorage.getItem("studentProfile")) || {};
 
   const [evaluations, setEvaluations] = useState([]);
+  const [loading, setLoading] = useState(true); // ✅ added
 
+  // ✅ FETCH FROM BACKEND
   useEffect(() => {
-    const allEvaluations =
-      JSON.parse(localStorage.getItem("evaluations")) || [];
+    if (!student.id) {
+      setLoading(false);
+      return;
+    }
 
-    // Match using EMAIL (important)
-    const studentEvaluations = allEvaluations.filter(
-      (e) => e.internEmail === student.email
-    );
+    fetch(`http://localhost:1305/api/evaluations/student/${student.id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Evaluations:", data);
+        setEvaluations(data);
+        setLoading(false); // ✅ stop loader
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, []);
 
-    setEvaluations(studentEvaluations);
-  }, [student.email]);
-
-
+  // 📊 CALCULATIONS
   const totalFeedback = evaluations.length;
 
   const avgRating =
@@ -50,9 +60,9 @@ const Feedback = () => {
 
   return (
     <>
-      <HeaderforStudent />
-
       <div className="admin-layout" style={{ paddingTop: "70px" }}>
+        
+        {/* SIDEBAR */}
         <aside className="admin-sidebar">
           <button onClick={() => navigate("/student-dashboard")}>
             <LayoutDashboard size={18} />
@@ -85,6 +95,7 @@ const Feedback = () => {
           </button>
         </aside>
 
+        {/* MAIN */}
         <main className="admin-main">
           <div className="page-header">
             <h1>Feedback & Evaluations</h1>
@@ -93,95 +104,108 @@ const Feedback = () => {
             </p>
           </div>
 
-          <section className="stats-grid">
-            <div className="stat-card">
-              <div className="stat-left">
-                <p>Total Feedback</p>
-                <h3>{totalFeedback}</h3>
-              </div>
-              <MessageSquare className="stat-icon blue" size={30} />
-            </div>
-
-            <div className="stat-card">
-              <div className="stat-left">
-                <p>Average Rating</p>
-                <h3>{avgRating}/5</h3>
-              </div>
-              <Star className="stat-icon orange" size={30} />
-            </div>
-
-            <div className="stat-card">
-              <div className="stat-left">
-                <p>Performance Score</p>
-                <h3>{performancePercent}%</h3>
-              </div>
-              <TrendingUp className="stat-icon green" size={30} />
-            </div>
-
-            <div className="stat-card">
-              <div className="stat-left">
-                <p>Evaluations</p>
-                <h3>{totalFeedback}</h3>
-              </div>
-              <Award className="stat-icon purple" size={30} />
-            </div>
-          </section>
-
-          <div className="dashboard-card">
-            <h2>Performance Overview</h2>
-
-            <p>Overall Performance</p>
-            <div className="progress-bar">
-              <div
-                className="progress-fill"
-                style={{ width: `${performancePercent}%` }}
-              ></div>
-            </div>
-          </div>
-
-          <div className="dashboard-card">
-            <h2>Recent Feedback</h2>
-
-            {evaluations.length === 0 ? (
-              <p>No feedback available yet.</p>
-            ) : (
-              evaluations.map((evalItem) => (
-                <div key={evalItem.id} className="evaluation-card">
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <h3>{evalItem.internName}</h3>
-                    <strong>⭐ {evalItem.rating}/5</strong>
+          {/* ✅ LOADER */}
+          {loading ? (
+            <Loader />
+          ) : (
+            <>
+              {/* STATS */}
+              <section className="stats-grid">
+                <div className="stat-card">
+                  <div className="stat-left">
+                    <p>Total Feedback</p>
+                    <h3>{totalFeedback}</h3>
                   </div>
-
-                  <p style={{ marginTop: "10px" }}>
-                    <strong>Technical:</strong> {evalItem.technical}
-                  </p>
-
-                  <p>
-                    <strong>Communication:</strong>{" "}
-                    {evalItem.communication}
-                  </p>
-
-                  <p>
-                    <strong>Work Ethic:</strong> {evalItem.workEthic}
-                  </p>
-
-                  <p style={{ marginTop: "10px" }}>
-                    <strong>Strengths:</strong> {evalItem.strengths}
-                  </p>
-
-                  <p>
-                    <strong>Areas for Improvement:</strong>{" "}
-                    {evalItem.improvements}
-                  </p>
+                  <MessageSquare className="stat-icon blue" size={30} />
                 </div>
-              ))
-            )}
-          </div>
+
+                <div className="stat-card">
+                  <div className="stat-left">
+                    <p>Average Rating</p>
+                    <h3>{avgRating}/5</h3>
+                  </div>
+                  <Star className="stat-icon orange" size={30} />
+                </div>
+
+                <div className="stat-card">
+                  <div className="stat-left">
+                    <p>Performance Score</p>
+                    <h3>{performancePercent}%</h3>
+                  </div>
+                  <TrendingUp className="stat-icon green" size={30} />
+                </div>
+
+                <div className="stat-card">
+                  <div className="stat-left">
+                    <p>Evaluations</p>
+                    <h3>{totalFeedback}</h3>
+                  </div>
+                  <Award className="stat-icon purple" size={30} />
+                </div>
+              </section>
+
+              {/* PROGRESS */}
+              <div className="dashboard-card">
+                <h2>Performance Overview</h2>
+
+                <p>Overall Performance</p>
+                <div className="progress-bar">
+                  <div
+                    className="progress-fill"
+                    style={{ width: `${performancePercent}%` }}
+                  ></div>
+                </div>
+              </div>
+
+              {/* FEEDBACK LIST */}
+              <div className="dashboard-card">
+                <h2>Recent Feedback</h2>
+
+                {evaluations.length === 0 ? (
+                  <p>No feedback available yet.</p>
+                ) : (
+                  evaluations.map((evalItem) => (
+                    <div key={evalItem.id} className="evaluation-card">
+
+                      <h2>{evalItem.internshipTitle}</h2>
+
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <h3>{evalItem.taskTitle || "Task"}</h3>
+                        <strong>⭐ {evalItem.rating}/5</strong>
+                      </div>
+
+                      <p style={{ marginTop: "10px" }}>
+                        <strong>Technical:</strong> {evalItem.technical}
+                      </p>
+
+                      <p>
+                        <strong>Communication:</strong> {evalItem.communication}
+                      </p>
+
+                      <p>
+                        <strong>Work Ethic:</strong> {evalItem.workEthic}
+                      </p>
+
+                      <p style={{ marginTop: "10px" }}>
+                        <strong>Strengths:</strong> {evalItem.strengths}
+                      </p>
+
+                      <p>
+                        <strong>Areas for Improvement:</strong> {evalItem.improvements}
+                      </p>
+
+                      {evalItem.feedback && (
+                        <div className="feedback-box">
+                          <strong>Feedback:</strong> {evalItem.feedback}
+                        </div>
+                      )}
+
+                    </div>
+                  ))
+                )}
+              </div>
+            </>
+          )}
         </main>
       </div>
     </>

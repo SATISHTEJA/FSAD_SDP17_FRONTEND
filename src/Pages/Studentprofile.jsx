@@ -1,175 +1,573 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import HeaderforStudent from "../Components/HeaderforStudent";
+import Loader from "../Components/Loader";
 import "../Styles/Dashboard.css";
 import {
   LayoutDashboard,
   Search,
-  FileText,ClipboardList,
-  CheckSquare,
+  FileText,
+  ClipboardList,
   MessageSquare,
-  User
+  User,
 } from "lucide-react";
 
 const StudentProfile = () => {
   const navigate = useNavigate();
+  const [showImagePreview, setShowImagePreview] = useState(false);
+  const storedStudent = JSON.parse(localStorage.getItem("studentProfile"));
+  const [profile, setProfile] = useState(storedStudent || {});
+  const [editMode, setEditMode] = useState(false);
+  const [resumeFile, setResumeFile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  
 
-  const [profile, setProfile] = useState({
-    name: "",
-    email: "",
-    university: "",
-    image: "",
+  const [extraData, setExtraData] = useState({
+    phone: storedStudent?.phone || "",
+    skills: (() => {
+      try {
+        return storedStudent?.skills
+          ? JSON.parse(storedStudent.skills)
+          : [];
+      } catch {
+        return [];
+      }
+    })(),
+    links: (() => {
+      try {
+        return storedStudent?.links
+          ? JSON.parse(storedStudent.links)
+          : [];
+      } catch {
+        return [];
+      }
+    })(),
+    resume: storedStudent?.resume || "",
   });
 
+  const [skillInput, setSkillInput] = useState("");
+  const [linkInput, setLinkInput] = useState("");
+
+
+  // FETCH (background)
   useEffect(() => {
-    const savedProfile =
-      JSON.parse(localStorage.getItem("studentProfile")) || {};
-    setProfile(savedProfile);
-  }, []);
+    if (!storedStudent?.id) {
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+
+    fetch(`http://localhost:1305/api/students/${storedStudent.id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setProfile(data);
+
+        setExtraData({
+          phone: data.phone || "",
+          skills: data.skills ? JSON.parse(data.skills) : [],
+          links: data.links ? JSON.parse(data.links) : [],
+          resume: data.resume || "",
+        });
+
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, [storedStudent?.id]);
 
   const handleChange = (e) => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
   };
 
+  // SAVE
+  const handleSave = () => {
+    const updated = {
+      name: profile.name,
+      university: profile.university,
+      stream: profile.stream,
+      branch: profile.branch,
+      joiningyear: profile.joiningyear,
+      graduatedyear: profile.graduatedyear,
+      phone: extraData.phone,
+      skills: JSON.stringify(extraData.skills),
+      links: JSON.stringify(extraData.links),
+      resume: extraData.resume,
+      image: profile.image,
+    };
+
+    setProfile((prev) => ({ ...prev, ...updated }));
+    setEditMode(false);
+
+    fetch(`http://localhost:1305/api/students/${profile.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updated),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        localStorage.setItem(
+          "studentProfile",
+          JSON.stringify({
+            id: data.id,
+            name: data.name,
+            email: data.email,
+            university: data.university,
+            stream: data.stream,
+            branch: data.branch,
+            joiningyear: data.joiningyear,
+            graduatedyear: data.graduatedyear,
+            phone: data.phone,
+            skills: data.skills,
+            links: data.links,
+            resume: data.resume,
+            image: null,
+          })
+        );
+      })
+      .catch((err) => console.error(err));
+  };
+
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    const maxSize = 2 * 1024 * 1024;
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setProfile({ ...profile, image: reader.result });
-    };
-    reader.readAsDataURL(file);
+    if (file.size > maxSize) {
+      alert("Image size should be less than 2MB");
+      return;
+    }
+
+    //restrict type
+    if (!file.type.startsWith("image/")) {
+      alert("Only image files allowed");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    fetch(`http://localhost:1305/api/students/${profile.id}/uploadImage`, {
+      method: "POST",
+      body: formData,
+    })
+      .then((res) => res.text())
+      .then((fileName) => {
+        setProfile({ ...profile, image: fileName });
+      });
+  };
+  const removeImage = () => {
+    fetch(`http://localhost:1305/api/students/${profile.id}/deleteImage`, {
+      method: "DELETE",
+    })
+      .then(() => {
+        setProfile({ ...profile, image: "" });
+      })
+      .catch((err) => console.error(err));
   };
 
-  const handleDeletePhoto = () => {
-    setProfile({ ...profile, image: "" });
+  // RESUME
+  const uploadResume = () => {
+    if (!resumeFile) return;
+
+    const formData = new FormData();
+    formData.append("file", resumeFile);
+
+    fetch(
+      `http://localhost:1305/api/students/${profile.id}/uploadResume`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    )
+      .then((res) => res.text())
+      .then((fileName) => {
+        setExtraData({ ...extraData, resume: fileName });
+      });
   };
 
-  const handleSave = () => {
-    localStorage.setItem("studentProfile", JSON.stringify(profile));
-    alert("Profile saved successfully!");
+  const deleteResume = () => {
+    fetch(
+      `http://localhost:1305/api/students/${profile.id}/deleteResume`,
+      { method: "DELETE" }
+    ).then(() => {
+      setExtraData({ ...extraData, resume: "" });
+    });
   };
+  const imageSrc =
+    profile.image
+      ? profile.image.startsWith("data:")
+        ? profile.image
+        : `http://localhost:1305/api/students/image/${profile.image}`
+      : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
   return (
     <>
-      <HeaderforStudent />
 
       <div className="admin-layout" style={{ paddingTop: "70px" }}>
-
         <aside className="admin-sidebar">
-
           <button onClick={() => navigate("/student-dashboard")}>
-            <LayoutDashboard size={18} />
-            Dashboard
+            <LayoutDashboard size={18} /> Dashboard
           </button>
-
           <button onClick={() => navigate("/browse-internships")}>
-            <Search size={18} />
-            Browse Internships
+            <Search size={18} /> Browse Internships
           </button>
-
           <button onClick={() => navigate("/myapplications")}>
-            <FileText size={18} />
-            My Applications
+            <FileText size={18} /> My Applications
           </button>
-
           <button onClick={() => navigate("/mytasks")}>
-            <ClipboardList size={18} />
-            My Tasks
+            <ClipboardList size={18} /> My Tasks
           </button>
-
           <button onClick={() => navigate("/feedback")}>
-            <MessageSquare size={18} />
-            Feedback
+            <MessageSquare size={18} /> Feedback
           </button>
-
           <button className="active">
-            <User size={18} />
-            Profile
+            <User size={18} /> Profile
           </button>
-
         </aside>
 
         <main className="admin-main">
 
-          <div className="page-header">
-            <h1>Student Profile</h1>
-            <p>Manage your profile information.</p>
-          </div>
+          {loading ? (
+            <Loader />
+          ) : (
+            <>
+              <div className="profile-header">
+                <div>
+                  <h1>Student Profile</h1>
+                  <p style={{ color: "#6b7280" }}>
+                    Manage your complete profile
+                  </p>
+                </div>
 
-          <div className="form-card" style={{ maxWidth: "700px" }}>
-
-            <div style={{ textAlign: "center", marginBottom: "20px" }}>
-              <img
-                src={
-                  profile.image ||
-                  "https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                }
-                alt="profile"
-                style={{
-                  width: "100px",
-                  height: "100px",
-                  borderRadius: "50%",
-                  objectFit: "cover",
-                  marginBottom: "10px",
-                }}
-              />
-
-              <div
-                style={{
-                  display: "flex",
-                  gap: "10px",
-                  justifyContent: "center",
-                }}
-              >
-                <input type="file" onChange={handleImageUpload} />
-
-                {profile.image && (
+                {!editMode ? (
                   <button
-                    onClick={handleDeletePhoto}
-                    style={{
-                      background: "#ef4444",
-                      color: "white",
-                      border: "none",
-                      padding: "6px 12px",
-                      borderRadius: "6px",
-                      cursor: "pointer",
-                    }}
+                    className="primary-btn"
+                    onClick={() => setEditMode(true)}
                   >
-                    Delete Photo
+                    Edit Profile
+                  </button>
+                ) : (
+                  <button className="primary-btn" onClick={handleSave}>
+                    Save Changes
                   </button>
                 )}
               </div>
-            </div>
 
-            <input
-              name="name"
-              placeholder="Full Name"
-              value={profile.name || ""}
-              onChange={handleChange}
-            />
+              <div className="profile-container">
+                <div className="profile-card">
+                  <img
+                    src={imageSrc}
+                    alt="profile"
+                    style={{ cursor: "pointer" }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowImagePreview(true);
+                    }}
+                  />
+                  <h2>{profile.name}</h2>
+                  <p>{profile.email}</p>
 
-            <input
-              name="email"
-              placeholder="Email"
-              value={profile.email || ""}
-              onChange={handleChange}
-            />
+                  {editMode && (
+                    <>
+                      <div
+                        style={{
+                          border: "2px dashed #ccc",
+                          padding: "15px",
+                          borderRadius: "10px",
+                          textAlign: "center",
+                          marginTop: "10px",
+                        }}
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          const file = e.dataTransfer.files[0];
 
-            <input
-              name="university"
-              placeholder="University / College"
-              value={profile.university || ""}
-              onChange={handleChange}
-            />
+                          if (file) {
+                            handleImageUpload({ target: { files: [file] } });
+                          }
+                        }}
+                      >
+                        <p style={{ fontSize: "13px", color: "#6b7280" }}>
+                          Drag & Drop Image or Click Below
+                        </p>
 
-            <button onClick={handleSave}>
-              Save Profile
-            </button>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleImageUpload(e)}
+                        />
+                      </div>
 
-          </div>
+                      {profile.image && (
+                        <button className="delete-btn" onClick={removeImage}>
+                          Remove Photo
+                        </button>
+                      )}
+                    </>
+                  )}
 
+                </div>
+
+                <div className="profile-details">
+                  <h3>🎓 Academic Details</h3>
+
+                  {["university", "stream", "branch"].map((field) => (
+                    <div key={field} className="profile-row">
+                      <label>{field}</label>
+                      {editMode ? (
+                        <input
+                          name={field}
+                          value={profile[field] || ""}
+                          onChange={handleChange}
+                        />
+                      ) : (
+                        <span>{profile[field]}</span>
+                      )}
+                    </div>
+                  ))}
+
+                  <h3 style={{ marginTop: "20px" }}>📅 Timeline</h3>
+
+                  {["joiningyear", "graduatedyear"].map((field) => (
+                    <div key={field} className="profile-row">
+                      <label>{field}</label>
+                      {editMode ? (
+                        <input
+                          name={field}
+                          value={profile[field] || ""}
+                          onChange={handleChange}
+                        />
+                      ) : (
+                        <span>{profile[field]}</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* PERSONAL */}
+              <div className="dashboard-card">
+                <h2>Personal Information</h2>
+                <p>📧 {profile.email}</p>
+
+                {editMode ? (
+                  <input
+                    value={extraData.phone}
+                    onChange={(e) =>
+                      setExtraData({ ...extraData, phone: e.target.value })
+                    }
+                  />
+                ) : (
+                  <p>📱 {extraData.phone}</p>
+                )}
+              </div>
+
+              {/* RESUME */}
+              <div className="dashboard-card">
+                <h2>Resume</h2>
+
+                {editMode && (
+                  <>
+                    <input
+                      type="file"
+                      onChange={(e) => setResumeFile(e.target.files[0])}
+                    />
+                    <button onClick={uploadResume} className="primary-btn">Upload</button>
+                  </>
+                )}
+
+                {extraData.resume && (
+                  <>
+                    <p>{extraData.resume}</p>
+
+                    <a
+                      href={`http://localhost:1305/api/students/resume/${extraData.resume}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="view-btn"
+                    >
+                      View Resume
+                    </a>
+
+                    {editMode && (
+                      <button className="delete-btn" onClick={deleteResume}>
+                        Delete
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
+
+              {/* SKILLS */}
+              <div className="dashboard-card">
+                <h2>Skills</h2>
+
+                {editMode && (
+                  <div className="quick-actions-row">
+                    <input
+                      value={skillInput}
+                      onChange={(e) => setSkillInput(e.target.value)}
+                    />
+
+                    <button
+                      className="secondary-btn"
+                      onClick={async () => {
+                        if (!skillInput.trim()) return;
+
+                        await fetch(
+                          `http://localhost:1305/api/students/${profile.id}/add-skill?skill=${skillInput}`,
+                          { method: "PUT" }
+                        );
+
+                        setExtraData({
+                          ...extraData,
+                          skills: [...extraData.skills, skillInput],
+                        });
+
+                        setSkillInput("");
+                      }}
+                    >
+                      Add
+                    </button>
+                  </div>
+                )}
+
+                {extraData.skills.map((s, i) => (
+                  <span key={i} className="skill-chip">
+                    {s}
+                    {editMode && (
+                      <button
+                        className="delete-btn"
+                        style={{ marginLeft: "8px", padding: "2px 6px" }}
+                        onClick={async () => {
+                          await fetch(
+                            `http://localhost:1305/api/students/${profile.id}/delete-skill?skill=${s}`,
+                            { method: "PUT" }
+                          );
+
+                          const updatedSkills = extraData.skills.filter((_, index) => index !== i);
+                          setExtraData({ ...extraData, skills: updatedSkills });
+                        }}
+                      >
+                        ×
+                      </button>
+                    )}
+                  </span>
+                ))}
+              </div>
+
+              {/* LINKS */}
+              <div className="dashboard-card">
+                <h2>Links</h2>
+
+                {editMode && (
+                  <div className="quick-actions-row">
+                    <input
+                      value={linkInput}
+                      onChange={(e) => setLinkInput(e.target.value)}
+                    />
+
+                    <button
+                      className="secondary-btn"
+                      onClick={async () => {
+                        if (!linkInput.trim()) return;
+
+                        await fetch(
+                          `http://localhost:1305/api/students/${profile.id}/add-link?link=${linkInput}`,
+                          { method: "PUT" }
+                        );
+
+                        setExtraData({
+                          ...extraData,
+                          links: [...extraData.links, linkInput],
+                        });
+
+                        setLinkInput("");
+                      }}
+                    >
+                      Add
+                    </button>
+                  </div>
+                )}
+
+                {extraData.links.map((l, i) => (
+                  <div key={i} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <p style={{ margin: 0 }}>{l}</p>
+
+                    {editMode && (
+                      <button
+                        className="delete-btn"
+                        onClick={async () => {
+                          await fetch(
+                            `http://localhost:1305/api/students/${profile.id}/delete-link?link=${l}`,
+                            { method: "PUT" }
+                          );
+
+                          const updatedLinks = extraData.links.filter((_, index) => index !== i);
+                          setExtraData({ ...extraData, links: updatedLinks });
+                        }}
+                      >
+                        Delete
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              {showImagePreview && (
+                <div
+                  onClick={() => setShowImagePreview(false)}
+                  style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100vw",
+                    height: "100vh",
+                    background: "rgba(0,0,0,0.98)",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    zIndex: 999999,
+                  }}
+                >
+                  {/* ✅ CLOSE BUTTON */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowImagePreview(false);
+                    }}
+                    style={{
+                      position: "absolute",
+                      top: "20px",
+                      right: "20px",
+                      background: "rgba(255,255,255,0.2)",
+                      border: "none",
+                      color: "#fff",
+                      fontSize: "22px",
+                      cursor: "pointer",
+                      padding: "8px 12px",
+                      borderRadius: "50%",
+                    }}
+                  >
+                    ✕
+                  </button>
+
+                  {/* ✅ IMAGE */}
+                  <img
+                    src={imageSrc}
+                    alt="preview"
+                    style={{
+                      maxWidth: "100%",
+                      maxHeight: "100%",
+                      objectFit: "contain",
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </div>
+              )}
+            </>
+          )}
         </main>
       </div>
     </>
