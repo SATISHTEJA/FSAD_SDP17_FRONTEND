@@ -14,7 +14,6 @@ const About = () => {
           remote internship experiences for students and organizations.
         </p>
 
-        {/* Overview */}
         <div style={styles.card}>
           <h2 style={styles.heading}>🌐 Project Overview</h2>
           <p>
@@ -25,7 +24,6 @@ const About = () => {
           </p>
         </div>
 
-        {/* Features */}
         <div style={styles.card}>
           <h2 style={styles.heading}>⚙️ Key Features</h2>
           <ul>
@@ -37,7 +35,6 @@ const About = () => {
           </ul>
         </div>
 
-        {/* Admin */}
         <div style={styles.card}>
           <h2 style={styles.heading}>👨‍💼 Admin (Employer)</h2>
           <ul>
@@ -48,7 +45,6 @@ const About = () => {
           </ul>
         </div>
 
-        {/* Student */}
         <div style={styles.card}>
           <h2 style={styles.heading}>🎓 Student (User)</h2>
           <ul>
@@ -59,7 +55,6 @@ const About = () => {
           </ul>
         </div>
 
-        {/* Vision */}
         <div style={styles.card}>
           <h2 style={styles.heading}>🚀 Our Vision</h2>
           <p>

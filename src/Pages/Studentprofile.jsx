@@ -48,7 +48,6 @@ const StudentProfile = () => {
   const [linkInput, setLinkInput] = useState("");
 
 
-  // FETCH (background)
   useEffect(() => {
     if (!storedStudent?.id) {
       setLoading(false);
@@ -81,7 +80,6 @@ const StudentProfile = () => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
   };
 
-  // SAVE
   const handleSave = () => {
     const updated = {
       name: profile.name,
@@ -139,7 +137,6 @@ const StudentProfile = () => {
       return;
     }
 
-    //restrict type
     if (!file.type.startsWith("image/")) {
       alert("Only image files allowed");
       return;
@@ -167,7 +164,6 @@ const StudentProfile = () => {
       .catch((err) => console.error(err));
   };
 
-  // RESUME
   const uploadResume = () => {
     if (!resumeFile) return;
 
@@ -347,7 +343,6 @@ const StudentProfile = () => {
                 </div>
               </div>
 
-              {/* PERSONAL */}
               <div className="dashboard-card">
                 <h2>Personal Information</h2>
                 <p>📧 {profile.email}</p>
@@ -364,7 +359,6 @@ const StudentProfile = () => {
                 )}
               </div>
 
-              {/* RESUME */}
               <div className="dashboard-card">
                 <h2>Resume</h2>
 
@@ -400,7 +394,6 @@ const StudentProfile = () => {
                 )}
               </div>
 
-              {/* SKILLS */}
               <div className="dashboard-card">
                 <h2>Skills</h2>
 
@@ -458,7 +451,6 @@ const StudentProfile = () => {
                 ))}
               </div>
 
-              {/* LINKS */}
               <div className="dashboard-card">
                 <h2>Links</h2>
 
@@ -531,7 +523,6 @@ const StudentProfile = () => {
                     zIndex: 999999,
                   }}
                 >
-                  {/* ✅ CLOSE BUTTON */}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -553,7 +544,6 @@ const StudentProfile = () => {
                     ✕
                   </button>
 
-                  {/* ✅ IMAGE */}
                   <img
                     src={imageSrc}
                     alt="preview"

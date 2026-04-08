@@ -167,17 +167,14 @@
 
 }
 
-/* wrapper only for password fields */
 .password-wrapper {
   position: relative;
 }
 
-/* only password inputs get spacing */
 .password-wrapper input {
   padding-right: 10px;
 }
 
-/* eye icon */
 .eye-icon {
   position: absolute;
   right: 12px;

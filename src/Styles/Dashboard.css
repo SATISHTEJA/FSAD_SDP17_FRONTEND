@@ -1,5 +1,3 @@
-/*Global Layout*/
-
 .admin-layout {
   display: flex;
   min-height: calc(100vh - 70px);
@@ -10,8 +8,6 @@
   margin-left: 240px;
   padding: 40px;
 }
-
-
 
 .admin-sidebar {
   position: fixed;
@@ -55,8 +51,6 @@
   color: #2563eb;
 }
 
-
-
 .page-header h1 { 
   font-size: 28px;
   margin-bottom: 6px;
@@ -66,8 +60,6 @@
   color: #6b7280;
   margin-bottom: 30px;
 }
-
-
 
 .stats-grid { 
   display: grid;
@@ -125,8 +117,6 @@
 .stat-icon.green { color: #16a34a; }
 .stat-icon.purple { color: #9333ea; }
 
-
-
 .dashboard-card { 
   background: white;
   padding: 25px;
@@ -139,8 +129,6 @@
 .dashboard-card h2 {
   margin-bottom: 20px;
 }
-
-
 
 .progress-card { 
   background: #ffffff;
@@ -199,8 +187,6 @@
   border-radius: 10px;
 }
 
-
-
 .search-filter-row { 
   display: flex;
   justify-content: space-between;
@@ -239,8 +225,6 @@
   align-items: flex-start;
 }
 
-
-
 .search-box { 
   flex: 1;
   max-width: 700px;
@@ -254,8 +238,6 @@
   background: #f9fafb;
   font-size: 14px;
 }
-
-
 
 .evaluation-card { 
   background: white;
@@ -278,8 +260,6 @@
 .star.active {
   color: #f59e0b;
 }
-
-
 
 .quick-actions-grid { 
   display: flex;
@@ -570,10 +550,6 @@
   display: inline-block;
 }
 
-/* ============================= */
-/* MyTasks Modal (Scoped Only)   */
-/* ============================= */
-
 .mytasks-modal {
   backdrop-filter: blur(4px);
 }
@@ -588,20 +564,17 @@
   animation: popupFade 0.25s ease;
 }
 
-/* Title */
 .mytasks-modal-box h3 {
   margin-bottom: 8px;
   font-size: 20px;
 }
 
-/* Task name */
 .mytasks-modal-box p {
   color: #6b7280;
   font-size: 14px;
   margin-bottom: 12px;
 }
 
-/* Textarea */
 .mytasks-modal-box textarea {
   width: 100%;
   padding: 10px;
@@ -616,17 +589,14 @@
   border-color: #4f46e5;
 }
 
-/* File input */
 .mytasks-modal-box input[type="file"] {
   margin-bottom: 12px;
 }
 
-/* Existing file text */
 .mytasks-modal-box p strong {
   color: #111827;
 }
 
-/* Buttons */
 .mytasks-modal-box .modal-actions {
   display: flex;
   justify-content: flex-end;
@@ -641,12 +611,10 @@
   border: none;
 }
 
-/* Cancel */
 .mytasks-modal-box .modal-actions button:first-child {
   background: #e5e7eb;
 }
 
-/* Submit / Update */
 .mytasks-modal-box .modal-actions button:last-child {
   background: #4f46e5;
   color: white;
@@ -656,7 +624,6 @@
   background: #4338ca;
 }
 
-/* Animation */
 @keyframes popupFade {
   from {
     opacity: 0;
@@ -667,10 +634,6 @@
     transform: translateY(0) scale(1);
   }
 }
-
-/* ========================= */
-/* FIX: Evaluation UI        */
-/* ========================= */
 
 .evaluation-item {
   background: #ffffff;
@@ -775,11 +738,6 @@
   gap: 12px;
   margin-top: 10px;
 }
-
-/* PROFILE HEADER */
-/* ========================= */
-/* 🔥 PROFILE PAGE MODERN UI */
-/* ========================= */
 
 .profile-header {
   display: flex;
@@ -924,7 +882,6 @@
   background: #059669;
 }
 
-/* ✅ SAFE LOADER (NO IMPACT ON EXISTING CSS) */
 .loader-wrapper {
   position: fixed;
   top: 0;
@@ -940,20 +897,17 @@
   z-index: 9999;
 }
 
-/* SVG size */
 .loader-svg {
   width: 70px;
   height: 70px;
   animation: rotate 1.2s linear infinite;
 }
 
-/* Common arc style */
 .arc {
-  stroke-dasharray: 90 150; /* creates arc */
+  stroke-dasharray: 90 150; 
   transform-origin: center;
 }
 
-/* Individual colors */
 .arc1 {
   stroke: #0b7cf5;
 }
@@ -968,7 +922,6 @@
   transform: rotate(240deg);
 }
 
-/* Rotation animation */
 @keyframes rotate {
   100% {
     transform: rotate(360deg);
@@ -981,7 +934,7 @@
 .logout-btn:hover {
   color: red;
 }
-/* ✅ GLOBAL SELECT FIX (safe) */
+
 select {
   width: 100%;
   padding: 10px 12px;
@@ -995,18 +948,15 @@ select {
   transition: 0.2s ease;
 }
 
-/* Hover */
 select:hover {
   border-color: #2563eb;
 }
 
-/* Focus */
 select:focus {
   border-color: #2563eb;
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
 }
 
-/* Arrow (same style you used already) */
 select {
   appearance: none;
   -webkit-appearance: none;

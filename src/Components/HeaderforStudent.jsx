@@ -15,7 +15,6 @@ const HeaderforStudent = () => {
   useEffect(() => {
   if (!storedStudent?.id) return;
 
-  // ✅ CHECK CACHE FIRST
   const cached = localStorage.getItem("studentProfileFull");
 
   if (cached) {
@@ -66,7 +65,6 @@ const HeaderforStudent = () => {
           </div>
         </div>
 
-        {/* ✅ IMAGE FIX */}
         <div
           onClick={() => navigate("/student-profile")}
           style={{ cursor: "pointer", position: "relative" }}
@@ -88,8 +86,8 @@ const HeaderforStudent = () => {
             src={
               student?.image
                 ? student.image.startsWith("data:")
-                  ? student.image // ✅ base64 directly
-                  : `http://localhost:1305/api/students/image/${student.image}` // ✅ filename
+                  ? student.image
+                  : `http://localhost:1305/api/students/image/${student.image}`
                 : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
             }
             alt="profile"

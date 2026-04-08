@@ -1,15 +1,12 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-
 import Mainlayout from "./Layouts/Mainlayout";
-
 import Home from "./Pages/Home";
 import Contact from "./Pages/Contact";
 import About from "./Pages/About";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
 import Forgetpass from "./Pages/Forgetpass";
-
 import ProtectedRoute from "./Components/ProtectedRoute";
 
 // Admin
@@ -42,12 +39,10 @@ const App = () => {
   return (
     <Routes>
 
-      {/* Layout Route */}
       <Route element={<Mainlayout />}>
         <Route path="/" element={<Home />} />
       </Route>
 
-      {/* Auth Routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/contact" element={<Contact />} />
@@ -86,7 +81,6 @@ const App = () => {
         <Route path="/student-profile" element={<Studentprofile />} />
       </Route>
 
-      {/* Card Pages (Optional - keep open or protect if needed) */}
       <Route path="/pio" element={<Pio />} />
       <Route path="/management" element={<Management />} />
       <Route path="/profileinfo" element={<Profileinfo />} />

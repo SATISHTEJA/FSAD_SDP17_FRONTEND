@@ -35,7 +35,6 @@ const Postinternship = () => {
     skills: "",
   });
 
-  // ✅ FETCH ONLY (LOADER HERE)
   useEffect(() => {
     setLoading(true);
 
@@ -51,12 +50,10 @@ const Postinternship = () => {
       });
   }, []);
 
-  // FORM CHANGE
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // ✅ POST (NO LOADER)
   const handleSubmit = async () => {
     if (!form.title || !form.duration || !form.location) return;
 
@@ -119,7 +116,6 @@ const Postinternship = () => {
 
   return (
     <>
-      {/* ✅ LOADER ONLY DURING FETCH */}
       {loading && <Loader />}
       <div className="admin-layout" style={{ paddingTop: "70px" }}>
         <aside className="admin-sidebar">

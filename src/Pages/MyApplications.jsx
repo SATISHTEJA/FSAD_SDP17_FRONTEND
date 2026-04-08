@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import HeaderforStudent from "../Components/HeaderforStudent";
-import Loader from "../Components/Loader"; // ✅ added
+import Loader from "../Components/Loader";
 import "../Styles/Dashboard.css";
 import {
   LayoutDashboard,
@@ -28,7 +28,6 @@ const MyApplications = () => {
   const [selectedApp, setSelectedApp] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // ✅ FETCH FROM BACKEND
   useEffect(() => {
     if (!student.id) {
       setLoading(false);
@@ -42,7 +41,7 @@ const MyApplications = () => {
       .then((data) => {
         console.log("Applications:", data);
         setApplications(data);
-        setLoading(false); // ✅ stop loader
+        setLoading(false);
       })
       .catch((err) => {
         console.error(err);
@@ -50,7 +49,6 @@ const MyApplications = () => {
       });
   }, [student.id]);
 
-  // 📊 STATS
   const total = applications.length;
   const underReview = applications.filter(
     (app) =>
@@ -122,12 +120,10 @@ const MyApplications = () => {
             <p>Track the status of your internship applications.</p>
           </div>
 
-          {/* ✅ LOADER */}
           {loading ? (
             <Loader />
           ) : (
             <>
-              {/* 📊 STATS */}
               <section className="stats-grid">
                 <div className="stat-card">
                   <div className="stat-left">
@@ -162,7 +158,6 @@ const MyApplications = () => {
                 </div>
               </section>
 
-              {/* 📦 APPLICATIONS */}
               {applications.length === 0 ? (
                 <div className="dashboard-card">
                   <p>You haven't applied to any internships yet.</p>
@@ -221,7 +216,6 @@ const MyApplications = () => {
                         View
                       </button>
 
-                      {/* ✅ WITHDRAW BUTTON */}
                       {(app.status?.toLowerCase() === "under review" ||
                         app.status?.toLowerCase() === "pending") && (
                           <button
@@ -240,7 +234,6 @@ const MyApplications = () => {
         </main>
       </div>
 
-      {/* MODAL */}
       {selectedApp && (
         <div className="modal-overlay">
           <div className="modal-container">

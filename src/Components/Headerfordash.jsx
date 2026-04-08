@@ -15,7 +15,6 @@ const HeaderforDash = () => {
   useEffect(() => {
   if (!storedAdmin?.id) return;
 
-  // ✅ CHECK CACHE FIRST
   const cached = localStorage.getItem("adminProfileFull");
 
   if (cached) {
@@ -65,7 +64,6 @@ const HeaderforDash = () => {
           </div>
         </div>
 
-        {/* ✅ IMAGE FIX */}
         <div
           onClick={() => navigate("/admin-profile")}
           style={{ cursor: "pointer", position: "relative" }}
@@ -87,7 +85,7 @@ const HeaderforDash = () => {
             src={
               admin?.image
                 ? admin.image.startsWith("data:")
-                  ? admin.image // ✅ base64 directly
+                  ? admin.image
                   : `http://localhost:1305/api/employers/image/${admin.image}`
                 : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
             }

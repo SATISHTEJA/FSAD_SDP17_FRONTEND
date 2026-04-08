@@ -35,7 +35,6 @@ const TrackProgress = () => {
     const admin = JSON.parse(localStorage.getItem("adminProfile"));
     const employerId = admin?.id;
 
-    // ✅ FETCH APPLICATIONS
     fetch(`http://localhost:1305/api/applications/employer/${employerId}`)
       .then((res) => res.json())
       .then((data) => {
@@ -47,7 +46,7 @@ const TrackProgress = () => {
           approved = safeData.filter(
             (app) =>
               app.status === "APPROVED" &&
-              app.internship?.id === Number(selectedInternship)
+              app.internshipId === Number(selectedInternship)
           );
         }
 
@@ -60,7 +59,6 @@ const TrackProgress = () => {
         setLoading(false);
       });
 
-    // ✅ FETCH INTERNSHIPS
     fetch(`http://localhost:1305/api/internships/employer/${employerId}`)
       .then((res) => res.json())
       .then((data) => {
@@ -68,20 +66,21 @@ const TrackProgress = () => {
       });
   };
 
-  // ✅ LOAD TASKS FROM BACKEND
   const loadTasks = (student) => {
     if (!student) return;
 
     setTaskLoading(true);
 
-    const studentId = student.student?.id || student.id;
-    const internshipId = student.internship?.id;
+    const studentId = student.studentId;
+    const internshipId = Number(selectedInternship);
 
     fetch(
       `http://localhost:1305/api/tasks/student/${studentId}/internship/${internshipId}`
     )
       .then((res) => res.json())
       .then((data) => {
+        console.log("TASKS:", data);
+
         const safeData = Array.isArray(data) ? data : [];
         safeData.sort((a, b) => b.id - a.id);
         setTasksData(safeData);
@@ -93,7 +92,6 @@ const TrackProgress = () => {
       });
   };
 
-  // ✅ PROGRESS CALCULATION
   const getProgress = () => {
     if (!tasksData || tasksData.length === 0) return 0;
 
@@ -121,8 +119,8 @@ const TrackProgress = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          studentId: selectedStudent.student?.id || selectedStudent.id,
-          internshipId: selectedStudent.internship?.id,
+          studentId: selectedStudent.studentId,
+          internshipId: Number(selectedInternship),
           title: newTask,
           description: newTask,
         }),
@@ -181,7 +179,6 @@ const TrackProgress = () => {
             <p>Select internship → then student → assign tasks</p>
           </div>
 
-          {/* DROPDOWN */}
           <div style={{ marginBottom: "20px" }}>
             <select
               value={selectedInternship}
@@ -214,7 +211,6 @@ const TrackProgress = () => {
             </p>
           )}
 
-          {/* STUDENTS */}
           {selectedInternship && (
             <div className="stats-grid-tp">
               {approvedStudents.length === 0 ? (
@@ -252,8 +248,6 @@ const TrackProgress = () => {
               )}
             </div>
           )}
-
-          {/* TASK SECTION */}
           {selectedStudent && (
             <div className="progress-card" style={{ marginTop: "30px" }}>
               <h3>{selectedStudent.fullName}</h3>
@@ -337,7 +331,6 @@ const TrackProgress = () => {
                 </button>
               </div>
 
-              {/* TASK LIST */}
               {taskLoading ? (
                 <Loader />
               ) : tasksData.length === 0 ? (
@@ -348,7 +341,6 @@ const TrackProgress = () => {
                     <h4>{task.title}</h4>
                     <p>Status: {task.status}</p>
 
-                    {/* ✅ Show only when completed */}
                     {task.status?.toUpperCase() === "COMPLETED" && (
                       <div style={{ marginTop: "10px" }}>
 
@@ -360,7 +352,6 @@ const TrackProgress = () => {
                           </p>
                         )}
 
-                        {/* FILE */}
                         {task.submissionFileName && (
                           <a
                             href={`http://localhost:1305/api/tasks/file/${task.id}`}

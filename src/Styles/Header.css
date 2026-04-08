@@ -1,4 +1,3 @@
-/*public header*/
 .headerpages {
   height: 64px;
   display: flex;
@@ -45,10 +44,6 @@
   gap: 18px;
 }
 
-
-
-
-/*dashboard header*/
 
 .dash-header {
   position: fixed;
@@ -110,7 +105,6 @@
   background: #f5f7fb;
 }
 
-/*form card*/
 
 .form-card {
   width: 100%;

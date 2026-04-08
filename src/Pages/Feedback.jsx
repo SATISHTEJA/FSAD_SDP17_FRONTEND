@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import HeaderforStudent from "../Components/HeaderforStudent";
-import Loader from "../Components/Loader"; // ✅ added
+import Loader from "../Components/Loader";
 import "../Styles/Dashboard.css";
 import {
   LayoutDashboard,
@@ -22,9 +22,8 @@ const Feedback = () => {
     JSON.parse(localStorage.getItem("studentProfile")) || {};
 
   const [evaluations, setEvaluations] = useState([]);
-  const [loading, setLoading] = useState(true); // ✅ added
+  const [loading, setLoading] = useState(true);
 
-  // ✅ FETCH FROM BACKEND
   useEffect(() => {
     if (!student.id) {
       setLoading(false);
@@ -36,7 +35,7 @@ const Feedback = () => {
       .then((data) => {
         console.log("Evaluations:", data);
         setEvaluations(data);
-        setLoading(false); // ✅ stop loader
+        setLoading(false);
       })
       .catch((err) => {
         console.error(err);
@@ -44,7 +43,6 @@ const Feedback = () => {
       });
   }, []);
 
-  // 📊 CALCULATIONS
   const totalFeedback = evaluations.length;
 
   const avgRating =
@@ -62,7 +60,6 @@ const Feedback = () => {
     <>
       <div className="admin-layout" style={{ paddingTop: "70px" }}>
         
-        {/* SIDEBAR */}
         <aside className="admin-sidebar">
           <button onClick={() => navigate("/student-dashboard")}>
             <LayoutDashboard size={18} />
@@ -95,7 +92,6 @@ const Feedback = () => {
           </button>
         </aside>
 
-        {/* MAIN */}
         <main className="admin-main">
           <div className="page-header">
             <h1>Feedback & Evaluations</h1>
@@ -104,12 +100,10 @@ const Feedback = () => {
             </p>
           </div>
 
-          {/* ✅ LOADER */}
           {loading ? (
             <Loader />
           ) : (
             <>
-              {/* STATS */}
               <section className="stats-grid">
                 <div className="stat-card">
                   <div className="stat-left">
@@ -144,7 +138,6 @@ const Feedback = () => {
                 </div>
               </section>
 
-              {/* PROGRESS */}
               <div className="dashboard-card">
                 <h2>Performance Overview</h2>
 
@@ -157,7 +150,6 @@ const Feedback = () => {
                 </div>
               </div>
 
-              {/* FEEDBACK LIST */}
               <div className="dashboard-card">
                 <h2>Recent Feedback</h2>
 

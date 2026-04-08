@@ -11,7 +11,6 @@ const Contact = () => {
           We'd love to hear from you! Reach out for support, feedback, or queries.
         </p>
 
-        {/* Contact Info */}
         <div style={styles.card}>
           <h2 style={styles.heading}>📬 Contact Information</h2>
 
@@ -37,7 +36,6 @@ const Contact = () => {
           </p>
         </div>
 
-        {/* Contact Form */}
         <div style={styles.card}>
           <h2 style={styles.heading}>📝 Send a Message</h2>
 

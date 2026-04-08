@@ -114,7 +114,6 @@
 .why-icon.purple { background: #ede9fe; color: #7c3aed; }
 .why-icon.green { background: #dcfce7; color: #16a34a; }
 
-/*features stylling*/
 
 .features {
   padding: 80px 20px;
@@ -135,28 +134,23 @@
   border-radius: 16px;
   padding: 20px;
 
-  /* card feel */
   border: 1px solid rgba(255,255,255,0.1);
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 
-  /* ❌ no highlight initially */
   border-top: 3px solid transparent;
 
   transition: all 0.3s ease;
   cursor: pointer;
 }
 
-/* 🔥 Hover state */
 .feature-card:hover {
   transform: translateY(-8px);
   box-shadow: 0 20px 40px rgba(0,0,0,0.35);
   background: rgba(255,255,255,0.09);
 
-  /* ✅ highlight appears only on hover */
   border-top: 3px solid #7c3aed;
 }
 
-/* Arrow */
 .feature-card::after {
   content: "→";
   position: absolute;
@@ -173,13 +167,11 @@
   transform: translateX(5px);
 }
 
-/* Icon */
 .feature-icon {
   margin-bottom: 18px;
   color: #7c3aed;
 }
 
-/* Title */
 .feature-card h3 {
   font-size: 22px;
   margin-bottom: 8px;
@@ -187,7 +179,6 @@
   font-weight: 600;
 }
 
-/* Description */
 .feature-card p {
   font-size: 15px;
   color: #6b7280;

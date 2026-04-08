@@ -178,7 +178,6 @@ const Register = () => {
 
       alert("Registration successful!");
 
-      // ✅ redirect to login (correct flow)
       navigate("/login", {
         state: { role: role.toLowerCase() },
       });
@@ -217,7 +216,6 @@ const Register = () => {
 
         <h2>Register As {role}</h2>
 
-        {/* KEEPING ALL YOUR UI EXACTLY SAME BELOW */}
 
         {/* STEP 1 */}
         {step === 1 && (
@@ -250,7 +248,9 @@ const Register = () => {
               <>
                 <input name="stream" value={formData.stream} placeholder="Stream" onChange={handleChange} />
                 <input name="branch" value={formData.branch} placeholder="Branch" onChange={handleChange} />
+                <h>Joining Year</h>
                 <input type="date" name="joiningyear" value={formData.joiningyear} placeholder="Joining Year" onChange={handleChange} />
+                <h>Graduation Year</h>
                 <input type="date" name="graduatedyear" value={formData.graduatedyear} placeholder="Graduation Year" onChange={handleChange} />
               </>
             )}

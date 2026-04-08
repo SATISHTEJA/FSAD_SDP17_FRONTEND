@@ -38,7 +38,6 @@ const Evaluations = () => {
   const [strengths, setStrengths] = useState("");
   const [improvements, setImprovements] = useState("");
 
-  // 🔹 Load internships
   useEffect(() => {
     const fetchInternships = async () => {
       setLoading(true);
@@ -57,7 +56,6 @@ const Evaluations = () => {
     if (employerId) fetchInternships();
   }, [employerId]);
 
-  // 🔹 Internship change
   const handleInternshipChange = async (id) => {
     setSelectedInternship(id);
 
@@ -89,7 +87,6 @@ const Evaluations = () => {
     setLoading(false);
   };
 
-  // 🔹 Student change
   const handleStudentChange = async (studentId) => {
     setSelectedStudent(studentId);
 
@@ -102,7 +99,6 @@ const Evaluations = () => {
     setLoading(true);
 
     try {
-      // Tasks
       const res = await fetch(
         `http://localhost:1305/api/tasks/student/${studentId}/internship/${selectedInternship}`
       );
@@ -111,7 +107,6 @@ const Evaluations = () => {
       const safeTasks = Array.isArray(data) ? data : [];
       setTasks(safeTasks);
 
-      // Evaluations
       const evalRes = await fetch(
         `http://localhost:1305/api/evaluations/student/${studentId}`
       );
@@ -149,7 +144,6 @@ const Evaluations = () => {
     setImprovements("");
   };
 
-  // 🔹 Submit
   const handleSubmit = async () => {
     if (
       !selectedTask ||
@@ -233,7 +227,6 @@ const Evaluations = () => {
           <div className="form-card">
             <h2>Create Evaluation</h2>
 
-            {/* Internship */}
             <label>Select Internship</label>
             <select
               value={selectedInternship}
@@ -249,7 +242,6 @@ const Evaluations = () => {
               ))}
             </select>
 
-            {/* Student */}
             <label>Select Student</label>
             <select
               disabled={!selectedInternship}
@@ -260,19 +252,18 @@ const Evaluations = () => {
             >
               <option value="">Choose student</option>
               {students.map((s) => (
-                <option key={s.id} value={s.student?.id}>
-                  {s.student?.fullName || s.fullName}
+                <option key={s.id} value={s.studentId}>
+                  {s.fullName}
                 </option>
               ))}
             </select>
 
-            {/* Task */}
             <label>Select Task</label>
             <select
               disabled={!selectedStudent}
               value={selectedTask}
               onChange={(e) =>
-                setSelectedTask(e.target.value)
+                setSelectedTask(Number(e.target.value))
               }
             >
               <option value="">Choose task</option>
@@ -297,8 +288,6 @@ const Evaluations = () => {
                   );
                 })}
             </select>
-
-            {/* Rating */}
             <label>Overall Rating *</label>
             <div className="star-rating">
               {[1, 2, 3, 4, 5].map((star) => (
@@ -361,7 +350,6 @@ const Evaluations = () => {
             </button>
           </div>
 
-          {/* ✅ RECENT EVALUATIONS */}
           <div style={{ marginTop: "20px" }}>
             <h3>Recent Evaluations</h3>
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import HeaderforStudent from "../Components/HeaderforStudent";
-import Loader from "../Components/Loader"; // ✅ loader
+import Loader from "../Components/Loader";
 import "../Styles/Dashboard.css";
 import {
   LayoutDashboard,
@@ -22,9 +22,8 @@ const MyTasks = () => {
   const [selectedTask, setSelectedTask] = useState(null);
   const [description, setDescription] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
-  const [loading, setLoading] = useState(true); // ✅ loader state
+  const [loading, setLoading] = useState(true);
 
-  // ✅ FETCH TASKS
   useEffect(() => {
     if (!student.id) {
       setLoading(false);
@@ -45,7 +44,6 @@ const MyTasks = () => {
       });
   }, []);
 
-  // 📊 FILTER
   const completedTasks = tasks.filter((t) => t.status === "COMPLETED");
   const pendingTasks = tasks.filter((t) => t.status !== "COMPLETED");
 
@@ -54,14 +52,12 @@ const MyTasks = () => {
       ? 0
       : Math.round((completedTasks.length / tasks.length) * 100);
 
-  // 🔥 OPEN MODAL
   const openSubmitModal = (task) => {
     setSelectedTask(task);
     setDescription("");
     setSelectedFile(null);
   };
 
-  // 🔄 FILE → BASE64
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -71,7 +67,6 @@ const MyTasks = () => {
     });
   };
 
-  // ✅ SUBMIT TASK
   const handleSubmitTask = async () => {
     if (!selectedTask) return;
 
@@ -105,7 +100,6 @@ const MyTasks = () => {
       alert("Task submitted successfully!");
       setSelectedTask(null);
 
-      // 🔄 REFRESH
       setLoading(true);
       fetch(`http://localhost:1305/api/tasks/student/${student.id}`)
         .then((res) => res.json())
@@ -148,7 +142,6 @@ const MyTasks = () => {
     <>
       <div className="admin-layout" style={{ paddingTop: "70px" }}>
 
-        {/* SIDEBAR */}
         <aside className="admin-sidebar">
           <button onClick={() => navigate("/student-dashboard")}>
             <LayoutDashboard size={18} /> Dashboard
@@ -175,13 +168,11 @@ const MyTasks = () => {
           </button>
         </aside>
 
-        {/* MAIN */}
         <main className="admin-main">
           <div className="page-header">
             <h1>My Tasks</h1>
           </div>
 
-          {/* ✅ LOADER */}
           {loading ? (
             <Loader />
           ) : (
@@ -219,7 +210,6 @@ const MyTasks = () => {
                 ))
               )}
 
-              {/* COMPLETED TASKS */}
               {completedTasks.map((task) => (
                 <div
                   key={task.id}
@@ -230,7 +220,6 @@ const MyTasks = () => {
                     alignItems: "flex-start",
                   }}
                 >
-                  {/* LEFT SIDE */}
                   <div>
                     <h3>{task.internshipTitle}</h3>
                     <h4>{task.title}</h4>
@@ -255,7 +244,6 @@ const MyTasks = () => {
                     )}
                   </div>
 
-                  {/* RIGHT SIDE */}
                   <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                     <button
                       className="delete-btn"
@@ -271,7 +259,6 @@ const MyTasks = () => {
         </main>
       </div>
 
-      {/* MODAL */}
       {selectedTask && (
         <div className="modal-overlay">
           <div className="modal-container">

@@ -24,7 +24,6 @@ const StudentDashboard = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ FETCH DATA FROM BACKEND
   const loadDashboardData = async () => {
     const loggedStudent =
       JSON.parse(localStorage.getItem("studentProfile")) || {};
@@ -39,7 +38,6 @@ const StudentDashboard = () => {
     try {
       setLoading(true);
 
-      // 🔥 APPLICATIONS
       const appRes = await fetch(
         `http://localhost:1305/api/applications/student/${loggedStudent.id}`
       );
@@ -51,7 +49,6 @@ const StudentDashboard = () => {
 
       setApprovedInternships(approved);
 
-      // 🔥 TASKS
       const taskRes = await fetch(
         `http://localhost:1305/api/tasks/student/${loggedStudent.id}`
       );
@@ -76,7 +73,6 @@ const StudentDashboard = () => {
     };
   }, []);
 
-  // 📊 CALCULATIONS
   const completed = tasks.filter(
     (t) =>
       t.status?.toLowerCase() === "completed" ||
@@ -102,7 +98,6 @@ const StudentDashboard = () => {
     <>
 
       <div className="admin-layout" style={{ paddingTop: "70px" }}>
-        {/* SIDEBAR */}
         <aside className="admin-sidebar">
           <button className="active" onClick={() => navigate("/student-dashboard")}>
             <LayoutDashboard size={18} />
@@ -135,13 +130,11 @@ const StudentDashboard = () => {
           </button>
         </aside>
 
-        {/* MAIN */}
         <main className="admin-main">
           {loading ? (
             <Loader />
           ) : (
             <>
-              {/* HEADER */}
               <div className="page-header">
                 <h1>
                   Welcome Back, {student.name || "Student"}!
@@ -149,7 +142,6 @@ const StudentDashboard = () => {
                 <p>Here's an overview of your internship progress.</p>
               </div>
 
-              {/* ✅ MULTIPLE INTERNSHIPS */}
               {approvedInternships.length > 0 &&
                 approvedInternships.map((intern, index) => (
                   <section key={index} className="dashboard-card">
@@ -182,7 +174,6 @@ const StudentDashboard = () => {
                   </section>
                 ))}
 
-              {/* STATS */}
               <section className="stats-grid" onClick={() => navigate("/mytasks")} style={{cursor: "pointer"}}>
                 <div className="stat-card">
                   <div className="stat-left">
@@ -217,7 +208,6 @@ const StudentDashboard = () => {
                 </div>
               </section>
 
-              {/* PROGRESS BAR */}
               <section className="dashboard-card">
                 <h2>Progress Overview</h2>
 
