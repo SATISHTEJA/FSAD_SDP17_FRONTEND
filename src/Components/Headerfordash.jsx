@@ -11,6 +11,7 @@ const HeaderforDash = () => {
 
   const [admin, setAdmin] = useState(storedAdmin);
   const [imgLoading, setImgLoading] = useState(true);
+  const token=localStorage.getItem("token");
 
   useEffect(() => {
   if (!storedAdmin?.id) return;
@@ -22,7 +23,11 @@ const HeaderforDash = () => {
     setAdmin(parsed);
     setImgLoading(false);
   }
-  fetch(`http://localhost:1305/api/employers/${storedAdmin.id}`)
+  fetch(`http://localhost:1305/api/employers/${storedAdmin.id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
     .then((res) => res.json())
     .then((data) => {
       setAdmin(data);

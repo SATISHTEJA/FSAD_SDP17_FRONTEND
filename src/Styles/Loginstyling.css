@@ -257,3 +257,30 @@
 .refresh-btn:hover {
   background: #0056b3;
 }
+
+.otp-btn{
+ width:100%;
+ margin-top:12px;
+ margin-bottom:12px;
+ padding:12px;
+ border:none;
+ border-radius:12px;
+ background:#2563eb;
+ color:white;
+ font-size:16px;
+ font-weight:600;
+ cursor:pointer;
+ transition:.3s;
+}
+
+.otp-btn:hover{
+ transform:translateY(-2px);
+ box-shadow:0 4px 10px rgba(37,99,235,.25);
+}
+
+.verified-msg{
+ margin-top:10px;
+ text-align:center;
+ color:green;
+ font-weight:700;
+}

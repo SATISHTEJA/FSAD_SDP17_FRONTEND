@@ -59,13 +59,16 @@ const Register = () => {
   const [captcha, setCaptcha] = useState("");
   const [userCaptcha, setUserCaptcha] = useState("");
   const [isCaptchaValid, setIsCaptchaValid] = useState(false);
-
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [otpLoading, setOtpLoading] = useState(false);
   const [passwordError, setPasswordError] = useState("");
   const [strength, setStrength] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
+  const [loading,setLoading]=useState(false);
   const navigate = useNavigate();
 
   const generateCaptcha = () => {
@@ -121,6 +124,71 @@ const Register = () => {
     if (score <= 2) return "Weak";
     if (score === 3 || score === 4) return "Medium";
     return "Strong";
+  };
+  const sendOtp = async () => {
+
+ if(!formData.email){
+   alert("Enter email first");
+   return;
+ }
+
+ try{
+   setLoading(true); // add
+
+   const res=await fetch(
+    `http://localhost:1305/emailotp/send?email=${encodeURIComponent(formData.email)}`,
+    {method:"POST"}
+   );
+
+   const msg=await res.text();
+
+   if(!res.ok){
+      alert(msg);
+      return;
+   }
+
+   setOtpSent(true);
+   alert("OTP sent");
+
+ }catch(err){
+   console.error(err);
+   alert("Failed sending OTP");
+ }
+ finally{
+   setLoading(false); // add
+ }
+
+}
+  const verifyOtp = async () => {
+
+    if (!otp) {
+      alert("Enter OTP");
+      return;
+    }
+
+    try {
+
+      const res = await fetch(
+        `http://localhost:1305/emailotp/verify?email=${encodeURIComponent(formData.email)}&otp=${otp}`,
+        {
+          method: "POST"
+        });
+
+      const msg = await res.text();
+
+      if (msg.toLowerCase().includes("success")
+        || msg.toLowerCase().includes("verified")) {
+        setOtpVerified(true);
+        alert("Email verified");
+      } else {
+        alert(msg);
+      }
+
+    } catch (err) {
+      console.error(err);
+      alert("Verification failed");
+    }
+
   };
   const handleRegister = async () => {
     if (formData.password !== formData.confirmPassword) {
@@ -221,7 +289,49 @@ const Register = () => {
         {step === 1 && (
           <>
             <input name="name" value={formData.name} placeholder="Full Name" onChange={handleChange} />
-            <div><input name="email" value={formData.email} type="email" placeholder="Email" onChange={handleChange} /></div>
+            <input
+              name="email"
+              type="email"
+              value={formData.email}
+              placeholder="Email"
+              onChange={handleChange}
+            />
+
+            {formData.email && !otpSent && (
+              <button
+                className="login-btn"
+                onClick={sendOtp}
+                disabled={loading}
+              >
+                {loading ? "Sending..." : "Send OTP"}
+              </button>
+            )}
+
+            {otpSent && !otpVerified && (
+              <>
+                <input
+                  value={otp}
+                  placeholder="Enter OTP"
+                  onChange={(e) => setOtp(e.target.value)}
+                />
+
+                <button
+                  className="otp-btn"
+                  onClick={verifyOtp}
+                >
+                  Verify OTP
+                </button>
+              </>
+            )}
+
+            {otpVerified && (
+              <p className="verified-msg">
+                Email Verified ✓
+              </p>
+            )}
+
+
+
             {role === "Admin" && (
               <input name="phone" value={formData.phone} placeholder="Phone Number" onChange={handleChange} />
             )}
@@ -233,7 +343,13 @@ const Register = () => {
                 onChange={handleChange}
               />
             )}
-            <button onClick={nextStep} className="login-btn">Next</button>
+            <button
+              onClick={nextStep}
+              disabled={!otpVerified}
+              className="login-btn"
+            >
+              Next
+            </button>
             <div className="link-row">
               <a href="/login" className="registerbut">Already have an account? Login</a>
               <a href="/" className="registerbut">Back to Home</a>

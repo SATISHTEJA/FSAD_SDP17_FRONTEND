@@ -98,9 +98,12 @@ const Evaluations = () => {
 
     setLoading(true);
 
+    const token = localStorage.getItem("token");
+
     try {
       const res = await fetch(
-        `http://localhost:1305/api/tasks/student/${studentId}/internship/${selectedInternship}`
+        `http://localhost:1305/api/tasks/student/${studentId}/internship/${selectedInternship}`,
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       const data = await res.json();
 
@@ -108,18 +111,18 @@ const Evaluations = () => {
       setTasks(safeTasks);
 
       const evalRes = await fetch(
-        `http://localhost:1305/api/evaluations/student/${studentId}`
+        `http://localhost:1305/api/evaluations/student/${studentId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       const evalData = await evalRes.json();
 
-      console.log("EVALUATIONS:", evalData);
 
       const safeEval = Array.isArray(evalData) ? evalData : [];
       setRecentEvaluations(safeEval);
 
       const evaluatedIds = safeEval.map(
-        (e) => e.taskId || e.task?.id
-      );
+  (e) => e.taskId ?? e.task?.id ?? e.id
+);
 
       setEvaluatedTasks(evaluatedIds);
     } catch (err) {
@@ -162,13 +165,14 @@ const Evaluations = () => {
     }
 
     setLoading(true);
+    const token = localStorage.getItem("token");
 
     try {
       await fetch(
         "http://localhost:1305/api/evaluations/evaluate",
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json",Authorization: `Bearer ${token}` },
           body: JSON.stringify({
             studentId: selectedStudent,
             taskId: selectedTask,
@@ -190,6 +194,7 @@ const Evaluations = () => {
     }
 
     setLoading(false);
+    
   };
 
   return (
@@ -349,7 +354,7 @@ const Evaluations = () => {
               Clear
             </button>
           </div>
-
+              
           <div style={{ marginTop: "20px" }}>
             <h3>Recent Evaluations</h3>
 
@@ -365,7 +370,7 @@ const Evaluations = () => {
                 .reverse()
                 .map((evalItem, index) => (
                   <div key={index} className="dashboard-card">
-                    <h4>{evalItem.task?.title || "Task"}</h4>
+                    <h4>{evalItem.taskTitle || "Task"}</h4>
                     <p>⭐ Rating: {evalItem.rating}</p>
                     <p><strong>Technical:</strong> {evalItem.technical}</p>
                     <p><strong>Communication:</strong> {evalItem.communication}</p>

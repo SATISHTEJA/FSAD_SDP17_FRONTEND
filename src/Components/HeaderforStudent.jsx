@@ -22,8 +22,16 @@ const HeaderforStudent = () => {
     setStudent(parsed);
     setImgLoading(false);
   }
+  
+  
+    const token = localStorage.getItem("token");
 
-  fetch(`http://localhost:1305/api/students/${storedStudent.id}`)
+  fetch(`http://localhost:1305/api/students/${storedStudent.id}`,{
+ headers:{
+  Authorization:`Bearer ${token}`
+ }
+}
+)
     .then((res) => res.json())
     .then((data) => {
       setStudent(data);

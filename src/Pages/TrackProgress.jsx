@@ -29,6 +29,7 @@ const TrackProgress = () => {
     loadData();
   }, [selectedInternship]);
 
+
   const loadData = () => {
     setLoading(true);
 
@@ -67,6 +68,7 @@ const TrackProgress = () => {
   };
 
   const loadTasks = (student) => {
+
     if (!student) return;
 
     setTaskLoading(true);
@@ -104,6 +106,7 @@ const TrackProgress = () => {
   };
   const handleAddTask = async (e) => {
     e.preventDefault();
+    const token = localStorage.getItem("token");
     if (!selectedStudent) {
       alert("Please select a student first.");
       return;
@@ -113,24 +116,56 @@ const TrackProgress = () => {
       return;
     }
     try {
-      const res = await fetch("http://localhost:1305/api/tasks", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          studentId: selectedStudent.studentId,
-          internshipId: Number(selectedInternship),
-          title: newTask,
-          description: newTask,
-        }),
-      });
-      if (!res.ok) throw new Error("Failed");
-      alert("Task Assigned Successfully");
+
+      const token =
+        localStorage.getItem("token");
+
+      const res = await fetch(
+        "http://localhost:1305/api/tasks",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+
+          body: JSON.stringify({
+
+            studentId: selectedStudent.studentId,
+
+            internshipId:
+              Number(selectedInternship),
+
+            title: newTask,
+
+            description: newTask
+
+          })
+        }
+      );
+
+      if (!res.ok) {
+
+        const err =
+          await res.text();
+
+        console.log(err);
+
+        throw new Error(err);
+      }
+
+      alert(
+        "Task Assigned Successfully"
+      );
+
       setNewTask("");
       setSelectedFile(null);
+
       loadTasks(selectedStudent);
-    } catch (err) {
+
+    }
+    catch (err) {
       console.error(err);
       alert("Error assigning task");
     }

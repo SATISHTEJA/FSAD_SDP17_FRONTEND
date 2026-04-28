@@ -109,7 +109,7 @@ const Home = () => {
               <div className="why-icon green">
                 <ShieldCheck size={26} />
               </div>
-              <p className="fontsizehead"h3>Secure & Reliable</p>
+              <p className="fontsizehead">Secure & Reliable</p>
               <p className="fontsizetext">Enterprise-grade security with full data protection.</p>
             </div>
           </div>

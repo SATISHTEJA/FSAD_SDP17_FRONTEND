@@ -50,6 +50,7 @@ const Login = () => {
         alert(data.message || "Invalid credentials");
         return;
       }
+      localStorage.setItem("token", data.token);
       localStorage.setItem("isLoggedIn", "true");
       localStorage.setItem("role", role);
 

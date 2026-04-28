@@ -15,7 +15,7 @@ const AdminProfile = () => {
   const navigate = useNavigate();
 
   const storedAdmin = JSON.parse(localStorage.getItem("adminProfile"));
-
+const token=localStorage.getItem("token");
   const [showImagePreview, setShowImagePreview] = useState(false);
   const [profile, setProfile] = useState(storedAdmin || {});
   const [editMode, setEditMode] = useState(false);
@@ -43,7 +43,11 @@ const AdminProfile = () => {
 
     setLoading(true);
 
-    fetch(`http://localhost:1305/api/employers/${storedAdmin.id}`)
+    fetch(`http://localhost:1305/api/employers/${storedAdmin.id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    } )
       .then((res) => res.json())
       .then((data) => {
         setProfile(data);
@@ -88,7 +92,7 @@ const AdminProfile = () => {
 
     fetch(`http://localhost:1305/api/employers/${profile.id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       body: JSON.stringify(updated),
     })
       .then((res) => res.json())
@@ -122,6 +126,9 @@ const AdminProfile = () => {
 
     fetch(`http://localhost:1305/api/employers/${profile.id}/uploadImage`, {
       method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
       body: formData,
     })
       .then((res) => res.text())
@@ -133,6 +140,9 @@ const AdminProfile = () => {
   const removeImage = () => {
     fetch(`http://localhost:1305/api/employers/${profile.id}/deleteImage`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     })
       .then(() => {
         setProfile((prev) => ({ ...prev, image: "" }));

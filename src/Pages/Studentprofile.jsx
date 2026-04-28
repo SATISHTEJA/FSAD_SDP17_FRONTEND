@@ -47,7 +47,7 @@ const StudentProfile = () => {
   const [skillInput, setSkillInput] = useState("");
   const [linkInput, setLinkInput] = useState("");
 
-
+const token=localStorage.getItem("token");
   useEffect(() => {
     if (!storedStudent?.id) {
       setLoading(false);
@@ -56,7 +56,14 @@ const StudentProfile = () => {
 
     setLoading(true);
 
-    fetch(`http://localhost:1305/api/students/${storedStudent.id}`)
+    fetch(`http://localhost:1305/api/students/${storedStudent.id}`,
+      {
+ headers:{
+  Authorization:`Bearer ${token}`
+ }
+}
+
+    )
       .then((res) => res.json())
       .then((data) => {
         setProfile(data);
@@ -97,10 +104,14 @@ const StudentProfile = () => {
 
     setProfile((prev) => ({ ...prev, ...updated }));
     setEditMode(false);
+    
 
     fetch(`http://localhost:1305/api/students/${profile.id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
       body: JSON.stringify(updated),
     })
       .then((res) => res.json())
@@ -147,6 +158,7 @@ const StudentProfile = () => {
 
     fetch(`http://localhost:1305/api/students/${profile.id}/uploadImage`, {
       method: "POST",
+        headers: {  Authorization: `Bearer ${token}` },
       body: formData,
     })
       .then((res) => res.text())
@@ -156,6 +168,7 @@ const StudentProfile = () => {
   };
   const removeImage = () => {
     fetch(`http://localhost:1305/api/students/${profile.id}/deleteImage`, {
+      headers: { Authorization: `Bearer ${token}` },
       method: "DELETE",
     })
       .then(() => {
@@ -174,6 +187,7 @@ const StudentProfile = () => {
       `http://localhost:1305/api/students/${profile.id}/uploadResume`,
       {
         method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       }
     )
@@ -186,7 +200,7 @@ const StudentProfile = () => {
   const deleteResume = () => {
     fetch(
       `http://localhost:1305/api/students/${profile.id}/deleteResume`,
-      { method: "DELETE" }
+      { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }
     ).then(() => {
       setExtraData({ ...extraData, resume: "" });
     });
