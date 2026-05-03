@@ -23,7 +23,7 @@ const Applications = () => {
     );
     const employerId = loggedEmployer?.id || {};
 
-    fetch(`http://localhost:1305/api/applications/employer/${employerId}`)
+    fetch(`https://fsad-sdp17-backend-2.onrender.com/api/applications/employer/${employerId}`)
       .then((res) => res.json())
       .then((data) => {
         setApplications(Array.isArray(data) ? data : []);

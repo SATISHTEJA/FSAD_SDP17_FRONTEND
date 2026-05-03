@@ -248,9 +248,9 @@ const Register = () => {
               <>
                 <input name="stream" value={formData.stream} placeholder="Stream" onChange={handleChange} />
                 <input name="branch" value={formData.branch} placeholder="Branch" onChange={handleChange} />
-                <h>Joining Year</h>
+                <label>Joining Year</label>
                 <input type="date" name="joiningyear" value={formData.joiningyear} placeholder="Joining Year" onChange={handleChange} />
-                <h>Graduation Year</h>
+                <label>Graduation Year</label>
                 <input type="date" name="graduatedyear" value={formData.graduatedyear} placeholder="Graduation Year" onChange={handleChange} />
               </>
             )}

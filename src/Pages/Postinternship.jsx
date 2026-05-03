@@ -17,11 +17,13 @@ const Postinternship = () => {
 
   const [internships, setInternships] = useState([]);
   const [loading, setLoading] = useState(true);
+  const token = localStorage.getItem("token");
   const admin = JSON.parse(localStorage.getItem("adminProfile"));
     const employerId = admin?.id;
 
   if (!employerId) {
   alert("Employer not found. Please login again.");
+  navigate("/login");
   return;
 }
 
@@ -38,7 +40,11 @@ const Postinternship = () => {
   useEffect(() => {
     setLoading(true);
 
-    fetch(`https://fsad-sdp17-backend-2.onrender.com/api/internships/employer/${employerId}`)
+    fetch(`https://fsad-sdp17-backend-2.onrender.com/api/internships/employer/${employerId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
         setInternships(data);
@@ -64,6 +70,7 @@ const Postinternship = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             ...form,
@@ -99,6 +106,9 @@ const Postinternship = () => {
   try {
     const res = await fetch(`https://fsad-sdp17-backend-2.onrender.com/api/internships/delete/${id}`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     const text = await res.text();
