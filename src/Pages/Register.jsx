@@ -13,10 +13,8 @@ const Register = () => {
     email: "",
     password: "",
     confirmPassword: "",
-
     stream: "",
     branch: "",
-
     companyname: "",
     companyWebsite: "",
     industry: "",
@@ -32,14 +30,11 @@ const Register = () => {
       email: "",
       password: "",
       confirmPassword: "",
-
       organization: "",
-
       stream: "",
       branch: "",
       joiningyear: "",
       graduatedyear: "",
-
       companyname: "",
       companyWebsite: "",
       industry: "",
@@ -48,7 +43,6 @@ const Register = () => {
       gstNumber: "",
       linkedin: ""
     });
-
     setStep(1);
     setStrength("");
     setPasswordError("");
@@ -59,16 +53,12 @@ const Register = () => {
   const [captcha, setCaptcha] = useState("");
   const [userCaptcha, setUserCaptcha] = useState("");
   const [isCaptchaValid, setIsCaptchaValid] = useState(false);
-  const [otpSent, setOtpSent] = useState(false);
-  const [otp, setOtp] = useState("");
-  const [otpVerified, setOtpVerified] = useState(false);
-  const [otpLoading, setOtpLoading] = useState(false);
   const [passwordError, setPasswordError] = useState("");
   const [strength, setStrength] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [loading,setLoading]=useState(false);
+
   const navigate = useNavigate();
 
   const generateCaptcha = () => {
@@ -81,13 +71,9 @@ const Register = () => {
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("isLoggedIn");
     const role = localStorage.getItem("role");
-
     if (isLoggedIn) {
-      if (role === "student") {
-        navigate("/student-dashboard");
-      } else if (role === "admin") {
-        navigate("/admin-dashboard");
-      }
+      if (role === "student") navigate("/student-dashboard");
+      else if (role === "admin") navigate("/admin-dashboard");
     }
   }, []);
 
@@ -100,13 +86,15 @@ const Register = () => {
       userCaptcha.trim() === captcha &&
       formData.password === formData.confirmPassword &&
       formData.password.trim() !== "";
-
     setIsCaptchaValid(isValid);
   }, [userCaptcha, captcha, formData.password, formData.confirmPassword]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: name === "organization" ? value.toUpperCase() : value, });
+    setFormData({
+      ...formData,
+      [name]: name === "organization" ? value.toUpperCase() : value,
+    });
   };
 
   const nextStep = () => setStep(step + 1);
@@ -114,96 +102,27 @@ const Register = () => {
 
   const checkPasswordStrength = (password) => {
     let score = 0;
-
     if (password.length >= 8) score++;
     if (/[A-Z]/.test(password)) score++;
     if (/[a-z]/.test(password)) score++;
     if (/[0-9]/.test(password)) score++;
     if (/[^A-Za-z0-9]/.test(password)) score++;
-
     if (score <= 2) return "Weak";
     if (score === 3 || score === 4) return "Medium";
     return "Strong";
   };
-  const sendOtp = async () => {
 
- if(!formData.email){
-   alert("Enter email first");
-   return;
- }
-
- try{
-   setLoading(true); // add
-
-   const res=await fetch(
-    `https://fsad-sdp17-backend-2.onrender.com/emailotp/send?email=${encodeURIComponent(formData.email)}`,
-    {method:"POST"}
-   );
-
-   const msg=await res.text();
-
-   if(!res.ok){
-      alert(msg);
-      return;
-   }
-
-   setOtpSent(true);
-   alert("OTP sent");
-
- }catch(err){
-   console.error(err);
-   alert("Failed sending OTP");
- }
- finally{
-   setLoading(false); // add
- }
-
-}
-  const verifyOtp = async () => {
-
-    if (!otp) {
-      alert("Enter OTP");
-      return;
-    }
-
-    try {
-
-      const res = await fetch(
-        `https://fsad-sdp17-backend-2.onrender.com/emailotp/verify?email=${encodeURIComponent(formData.email)}&otp=${otp}`,
-        {
-          method: "POST"
-        });
-
-      const msg = await res.text();
-
-      if (msg.toLowerCase().includes("success")
-        || msg.toLowerCase().includes("verified")) {
-        setOtpVerified(true);
-        alert("Email verified");
-      } else {
-        alert(msg);
-      }
-
-    } catch (err) {
-      console.error(err);
-      alert("Verification failed");
-    }
-
-  };
   const handleRegister = async () => {
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match!");
       return;
     }
-
     if (!isCaptchaValid) {
       alert("Invalid captcha!");
       return;
     }
-
     try {
       let payload = {};
-
       if (role === "Student") {
         payload = {
           role: "student",
@@ -214,7 +133,7 @@ const Register = () => {
           branch: formData.branch,
           joiningyear: formData.joiningyear,
           graduatedyear: formData.graduatedyear,
-          organization: formData.organization
+          organization: formData.organization,
         };
       } else {
         payload = {
@@ -229,27 +148,23 @@ const Register = () => {
         };
       }
 
-      const response = await fetch("https://fsad-sdp17-backend-2.onrender.com/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      const response = await fetch(
+        "https://fsad-sdp17-backend-2.onrender.com/api/auth/register",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
 
       const data = await response.text();
-
       if (!response.ok) {
         alert(data || "Registration failed");
         return;
       }
 
       alert("Registration successful!");
-
-      navigate("/login", {
-        state: { role: role.toLowerCase() },
-      });
-
+      navigate("/login", { state: { role: role.toLowerCase() } });
     } catch (error) {
       console.error("Register error:", error);
       alert("Server error. Make sure backend is running.");
@@ -263,20 +178,13 @@ const Register = () => {
         <div className="role-switch">
           <button
             className={role === "Student" ? "active" : ""}
-            onClick={() => {
-              setRole("Student");
-              resetForm();
-            }}
+            onClick={() => { setRole("Student"); resetForm(); }}
           >
             Student
           </button>
-
           <button
             className={role === "Admin" ? "active" : ""}
-            onClick={() => {
-              setRole("Admin");
-              resetForm();
-            }}
+            onClick={() => { setRole("Admin"); resetForm(); }}
           >
             Admin
           </button>
@@ -284,11 +192,15 @@ const Register = () => {
 
         <h2>Register As {role}</h2>
 
-
         {/* STEP 1 */}
         {step === 1 && (
           <>
-            <input name="name" value={formData.name} placeholder="Full Name" onChange={handleChange} />
+            <input
+              name="name"
+              value={formData.name}
+              placeholder="Full Name"
+              onChange={handleChange}
+            />
             <input
               name="email"
               type="email"
@@ -297,43 +209,13 @@ const Register = () => {
               onChange={handleChange}
             />
 
-            {formData.email && !otpSent && (
-              <button
-                className="login-btn"
-                onClick={sendOtp}
-                disabled={loading}
-              >
-                {loading ? "Sending..." : "Send OTP"}
-              </button>
-            )}
-
-            {otpSent && !otpVerified && (
-              <>
-                <input
-                  value={otp}
-                  placeholder="Enter OTP"
-                  onChange={(e) => setOtp(e.target.value)}
-                />
-
-                <button
-                  className="otp-btn"
-                  onClick={verifyOtp}
-                >
-                  Verify OTP
-                </button>
-              </>
-            )}
-
-            {otpVerified && (
-              <p className="verified-msg">
-                Email Verified ✓
-              </p>
-            )}
-
-
-
             {role === "Admin" && (
-              <input name="phone" value={formData.phone} placeholder="Phone Number" onChange={handleChange} />
+              <input
+                name="phone"
+                value={formData.phone}
+                placeholder="Phone Number"
+                onChange={handleChange}
+              />
             )}
             {role === "Student" && (
               <input
@@ -343,13 +225,15 @@ const Register = () => {
                 onChange={handleChange}
               />
             )}
+
             <button
               onClick={nextStep}
-              disabled={!otpVerified}
+              disabled={!formData.name || !formData.email}
               className="login-btn"
             >
               Next
             </button>
+
             <div className="link-row">
               <a href="/login" className="registerbut">Already have an account? Login</a>
               <a href="/" className="registerbut">Back to Home</a>
@@ -410,6 +294,12 @@ const Register = () => {
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </span>
             </div>
+
+            {strength && (
+              <p style={{ fontSize: "12px", color: strength === "Strong" ? "green" : strength === "Medium" ? "orange" : "red" }}>
+                Password Strength: {strength}
+              </p>
+            )}
 
             <div className="password-wrapper">
               <input
