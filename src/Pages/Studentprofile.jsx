@@ -56,7 +56,7 @@ const token=localStorage.getItem("token");
 
     setLoading(true);
 
-    fetch(`http://localhost:1305/api/students/${storedStudent.id}`,
+    fetch(`https://fsad-sdp17-backend-2.onrender.com/api/students/${storedStudent.id}`,
       {
  headers:{
   Authorization:`Bearer ${token}`
@@ -106,7 +106,7 @@ const token=localStorage.getItem("token");
     setEditMode(false);
     
 
-    fetch(`http://localhost:1305/api/students/${profile.id}`, {
+    fetch(`https://fsad-sdp17-backend-2.onrender.com/api/students/${profile.id}`, {
       method: "PUT",
       headers: { 
         "Content-Type": "application/json",
@@ -156,7 +156,7 @@ const token=localStorage.getItem("token");
     const formData = new FormData();
     formData.append("file", file);
 
-    fetch(`http://localhost:1305/api/students/${profile.id}/uploadImage`, {
+    fetch(`https://fsad-sdp17-backend-2.onrender.com/api/students/${profile.id}/uploadImage`, {
       method: "POST",
         headers: {  Authorization: `Bearer ${token}` },
       body: formData,
@@ -167,7 +167,7 @@ const token=localStorage.getItem("token");
       });
   };
   const removeImage = () => {
-    fetch(`http://localhost:1305/api/students/${profile.id}/deleteImage`, {
+    fetch(`https://fsad-sdp17-backend-2.onrender.com/api/students/${profile.id}/deleteImage`, {
       headers: { Authorization: `Bearer ${token}` },
       method: "DELETE",
     })
@@ -184,7 +184,7 @@ const token=localStorage.getItem("token");
     formData.append("file", resumeFile);
 
     fetch(
-      `http://localhost:1305/api/students/${profile.id}/uploadResume`,
+      `https://fsad-sdp17-backend-2.onrender.com/api/students/${profile.id}/uploadResume`,
       {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
@@ -199,7 +199,7 @@ const token=localStorage.getItem("token");
 
   const deleteResume = () => {
     fetch(
-      `http://localhost:1305/api/students/${profile.id}/deleteResume`,
+      `https://fsad-sdp17-backend-2.onrender.com/api/students/${profile.id}/deleteResume`,
       { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }
     ).then(() => {
       setExtraData({ ...extraData, resume: "" });
@@ -209,7 +209,7 @@ const token=localStorage.getItem("token");
     profile.image
       ? profile.image.startsWith("data:")
         ? profile.image
-        : `http://localhost:1305/api/students/image/${profile.image}`
+        : `https://fsad-sdp17-backend-2.onrender.com/api/students/image/${profile.image}`
       : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
   return (

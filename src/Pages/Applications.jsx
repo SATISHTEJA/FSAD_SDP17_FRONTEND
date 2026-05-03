@@ -39,7 +39,7 @@ const Applications = () => {
   const updateStatus = async (id, newStatus) => {
     try {
       const res = await fetch(
-        `http://localhost:1305/api/applications/${id}/status?status=${newStatus}`,
+        `https://fsad-sdp17-backend-2.onrender.com/api/applications/${id}/status?status=${newStatus}`,
         {
           method: "PUT",
         }
@@ -115,7 +115,7 @@ const Applications = () => {
                     <p>
                       <strong>Resume:</strong>{" "}
                       <a
-                        href={`http://localhost:1305/${app.resumePath}`}
+                        href={`https://fsad-sdp17-backend-2.onrender.com/${app.resumePath}`}
                         target="_blank"
                         rel="noreferrer"
                       >

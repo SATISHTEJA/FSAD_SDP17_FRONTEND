@@ -36,7 +36,7 @@ const MyApplications = () => {
 
     setLoading(true);
 
-    fetch(`http://localhost:1305/api/applications/student/${student.id}`)
+    fetch(`https://fsad-sdp17-backend-2.onrender.com/api/applications/student/${student.id}`)
       .then((res) => res.json())
       .then((data) => {
         console.log("Applications:", data);
@@ -66,7 +66,7 @@ const MyApplications = () => {
       return;
 
     try {
-      await fetch(`http://localhost:1305/api/applications/${id}`, {
+      await fetch(`https://fsad-sdp17-backend-2.onrender.com/api/applications/${id}`, {
         method: "DELETE",
       });
       setApplications((prev) => prev.filter((app) => app.id !== id));

@@ -31,7 +31,7 @@ const Forgetpass = () => {
       setLoading(true);
 
       const res = await fetch(
-        `http://localhost:1305/emailotp/send?email=${encodeURIComponent(email)}`,
+        `https://fsad-sdp17-backend-2.onrender.com/emailotp/send?email=${encodeURIComponent(email)}`,
         {
           method: "POST"
         }
@@ -69,7 +69,7 @@ const Forgetpass = () => {
       setLoading(true);
 
       const res = await fetch(
-        `http://localhost:1305/emailotp/verify?email=${encodeURIComponent(email)}&otp=${otp}`,
+        `https://fsad-sdp17-backend-2.onrender.com/emailotp/verify?email=${encodeURIComponent(email)}&otp=${otp}`,
         {
           method: "POST"
         }
@@ -111,7 +111,7 @@ const Forgetpass = () => {
       setLoading(true);
 
       const res = await fetch(
-        "http://localhost:1305/api/auth/forgot-password/reset",
+        "https://fsad-sdp17-backend-2.onrender.com/api/auth/forgot-password/reset",
         {
           method: "POST",
           headers: {

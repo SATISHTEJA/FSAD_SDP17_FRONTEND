@@ -30,7 +30,7 @@ const Feedback = () => {
       return;
     }
 
-    fetch(`http://localhost:1305/api/evaluations/student/${student.id}`)
+    fetch(`https://fsad-sdp17-backend-2.onrender.com/api/evaluations/student/${student.id}`)
       .then((res) => res.json())
       .then((data) => {
         console.log("Evaluations:", data);

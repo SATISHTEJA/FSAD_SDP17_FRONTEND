@@ -39,7 +39,7 @@ const StudentDashboard = () => {
       setLoading(true);
 
       const appRes = await fetch(
-        `http://localhost:1305/api/applications/student/${loggedStudent.id}`
+        `https://fsad-sdp17-backend-2.onrender.com/api/applications/student/${loggedStudent.id}`
       );
       const applications = await appRes.json();
 
@@ -50,7 +50,7 @@ const StudentDashboard = () => {
       setApprovedInternships(approved);
 
       const taskRes = await fetch(
-        `http://localhost:1305/api/tasks/student/${loggedStudent.id}`
+        `https://fsad-sdp17-backend-2.onrender.com/api/tasks/student/${loggedStudent.id}`
       );
       const taskData = await taskRes.json();
 

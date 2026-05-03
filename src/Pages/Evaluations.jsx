@@ -43,7 +43,7 @@ const Evaluations = () => {
       setLoading(true);
       try {
         const res = await fetch(
-          `http://localhost:1305/api/internships/employer/${employerId}`
+          `https://fsad-sdp17-backend-2.onrender.com/api/internships/employer/${employerId}`
         );
         const data = await res.json();
         setInternships(Array.isArray(data) ? data : []);
@@ -71,7 +71,7 @@ const Evaluations = () => {
 
     try {
       const res = await fetch(
-        `http://localhost:1305/api/applications/internship/${id}`
+        `https://fsad-sdp17-backend-2.onrender.com/api/applications/internship/${id}`
       );
       const data = await res.json();
 
@@ -102,7 +102,7 @@ const Evaluations = () => {
 
     try {
       const res = await fetch(
-        `http://localhost:1305/api/tasks/student/${studentId}/internship/${selectedInternship}`,
+        `https://fsad-sdp17-backend-2.onrender.com/api/tasks/student/${studentId}/internship/${selectedInternship}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const data = await res.json();
@@ -111,7 +111,7 @@ const Evaluations = () => {
       setTasks(safeTasks);
 
       const evalRes = await fetch(
-        `http://localhost:1305/api/evaluations/student/${studentId}`,
+        `https://fsad-sdp17-backend-2.onrender.com/api/evaluations/student/${studentId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const evalData = await evalRes.json();
@@ -169,7 +169,7 @@ const Evaluations = () => {
 
     try {
       await fetch(
-        "http://localhost:1305/api/evaluations/evaluate",
+        "https://fsad-sdp17-backend-2.onrender.com/api/evaluations/evaluate",
         {
           method: "POST",
           headers: { "Content-Type": "application/json",Authorization: `Bearer ${token}` },

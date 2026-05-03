@@ -36,7 +36,7 @@ const TrackProgress = () => {
     const admin = JSON.parse(localStorage.getItem("adminProfile"));
     const employerId = admin?.id;
 
-    fetch(`http://localhost:1305/api/applications/employer/${employerId}`)
+    fetch(`https://fsad-sdp17-backend-2.onrender.com/api/applications/employer/${employerId}`)
       .then((res) => res.json())
       .then((data) => {
         const safeData = Array.isArray(data) ? data : [];
@@ -60,7 +60,7 @@ const TrackProgress = () => {
         setLoading(false);
       });
 
-    fetch(`http://localhost:1305/api/internships/employer/${employerId}`)
+    fetch(`https://fsad-sdp17-backend-2.onrender.com/api/internships/employer/${employerId}`)
       .then((res) => res.json())
       .then((data) => {
         setInternships(Array.isArray(data) ? data : []);
@@ -77,7 +77,7 @@ const TrackProgress = () => {
     const internshipId = Number(selectedInternship);
 
     fetch(
-      `http://localhost:1305/api/tasks/student/${studentId}/internship/${internshipId}`
+      `https://fsad-sdp17-backend-2.onrender.com/api/tasks/student/${studentId}/internship/${internshipId}`
     )
       .then((res) => res.json())
       .then((data) => {
@@ -121,7 +121,7 @@ const TrackProgress = () => {
         localStorage.getItem("token");
 
       const res = await fetch(
-        "http://localhost:1305/api/tasks",
+        "https://fsad-sdp17-backend-2.onrender.com/api/tasks",
         {
           method: "POST",
 

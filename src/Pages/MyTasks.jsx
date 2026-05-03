@@ -32,7 +32,7 @@ const MyTasks = () => {
 
     setLoading(true);
 
-    fetch(`http://localhost:1305/api/tasks/student/${student.id}`)
+    fetch(`https://fsad-sdp17-backend-2.onrender.com/api/tasks/student/${student.id}`)
       .then((res) => res.json())
       .then((data) => {
         setTasks(data);
@@ -85,7 +85,7 @@ const MyTasks = () => {
       }
 
       await fetch(
-        `http://localhost:1305/api/tasks/submit/${selectedTask.id}`,
+        `https://fsad-sdp17-backend-2.onrender.com/api/tasks/submit/${selectedTask.id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -101,7 +101,7 @@ const MyTasks = () => {
       setSelectedTask(null);
 
       setLoading(true);
-      fetch(`http://localhost:1305/api/tasks/student/${student.id}`)
+      fetch(`https://fsad-sdp17-backend-2.onrender.com/api/tasks/student/${student.id}`)
         .then((res) => res.json())
         .then((data) => {
           setTasks(data);
@@ -119,14 +119,14 @@ const MyTasks = () => {
 
     try {
       await fetch(
-        `http://localhost:1305/api/tasks/${taskId}`,
+        `https://fsad-sdp17-backend-2.onrender.com/api/tasks/${taskId}`,
         {
           method: "PUT",
         }
       );
       setLoading(true);
       const res = await fetch(
-        `http://localhost:1305/api/tasks/student/${student.id}`
+        `https://fsad-sdp17-backend-2.onrender.com/api/tasks/student/${student.id}`
       );
       const data = await res.json();
       setTasks(data);

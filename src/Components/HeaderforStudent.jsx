@@ -26,7 +26,7 @@ const HeaderforStudent = () => {
   
     const token = localStorage.getItem("token");
 
-  fetch(`http://localhost:1305/api/students/${storedStudent.id}`,{
+  fetch(`https://fsad-sdp17-backend-2.onrender.com/api/students/${storedStudent.id}`,{
  headers:{
   Authorization:`Bearer ${token}`
  }
@@ -95,7 +95,7 @@ const HeaderforStudent = () => {
               student?.image
                 ? student.image.startsWith("data:")
                   ? student.image
-                  : `http://localhost:1305/api/students/image/${student.image}`
+                  : `https://fsad-sdp17-backend-2.onrender.com/api/students/image/${student.image}`
                 : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
             }
             alt="profile"

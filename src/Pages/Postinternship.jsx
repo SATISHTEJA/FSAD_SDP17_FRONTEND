@@ -38,7 +38,7 @@ const Postinternship = () => {
   useEffect(() => {
     setLoading(true);
 
-    fetch(`http://localhost:1305/api/internships/employer/${employerId}`)
+    fetch(`https://fsad-sdp17-backend-2.onrender.com/api/internships/employer/${employerId}`)
       .then((res) => res.json())
       .then((data) => {
         setInternships(data);
@@ -59,7 +59,7 @@ const Postinternship = () => {
 
     try {
       const res = await fetch(
-        `http://localhost:1305/api/internships?employerId=${employerId}`,
+        `https://fsad-sdp17-backend-2.onrender.com/api/internships?employerId=${employerId}`,
         {
           method: "POST",
           headers: {
@@ -97,7 +97,7 @@ const Postinternship = () => {
 
   const handleDelete = async (id) => {
   try {
-    const res = await fetch(`http://localhost:1305/api/internships/delete/${id}`, {
+    const res = await fetch(`https://fsad-sdp17-backend-2.onrender.com/api/internships/delete/${id}`, {
       method: "DELETE",
     });
 

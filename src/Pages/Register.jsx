@@ -136,7 +136,7 @@ const Register = () => {
    setLoading(true); // add
 
    const res=await fetch(
-    `http://localhost:1305/emailotp/send?email=${encodeURIComponent(formData.email)}`,
+    `https://fsad-sdp17-backend-2.onrender.com/emailotp/send?email=${encodeURIComponent(formData.email)}`,
     {method:"POST"}
    );
 
@@ -169,7 +169,7 @@ const Register = () => {
     try {
 
       const res = await fetch(
-        `http://localhost:1305/emailotp/verify?email=${encodeURIComponent(formData.email)}&otp=${otp}`,
+        `https://fsad-sdp17-backend-2.onrender.com/emailotp/verify?email=${encodeURIComponent(formData.email)}&otp=${otp}`,
         {
           method: "POST"
         });
@@ -229,7 +229,7 @@ const Register = () => {
         };
       }
 
-      const response = await fetch("http://localhost:1305/api/auth/register", {
+      const response = await fetch("https://fsad-sdp17-backend-2.onrender.com/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -43,7 +43,7 @@ const token=localStorage.getItem("token");
 
     setLoading(true);
 
-    fetch(`http://localhost:1305/api/employers/${storedAdmin.id}`, {
+    fetch(`https://fsad-sdp17-backend-2.onrender.com/api/employers/${storedAdmin.id}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -90,7 +90,7 @@ const token=localStorage.getItem("token");
     setProfile((prev) => ({ ...prev, ...updated }));
     setEditMode(false);
 
-    fetch(`http://localhost:1305/api/employers/${profile.id}`, {
+    fetch(`https://fsad-sdp17-backend-2.onrender.com/api/employers/${profile.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       body: JSON.stringify(updated),
@@ -105,7 +105,7 @@ const token=localStorage.getItem("token");
     profile.image
       ? profile.image.startsWith("data:")
         ? profile.image
-        : `http://localhost:1305/api/employers/image/${profile.image}`
+        : `https://fsad-sdp17-backend-2.onrender.com/api/employers/image/${profile.image}`
       : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -124,7 +124,7 @@ const token=localStorage.getItem("token");
     const formData = new FormData();
     formData.append("file", file);
 
-    fetch(`http://localhost:1305/api/employers/${profile.id}/uploadImage`, {
+    fetch(`https://fsad-sdp17-backend-2.onrender.com/api/employers/${profile.id}/uploadImage`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`
@@ -138,7 +138,7 @@ const token=localStorage.getItem("token");
   };
 
   const removeImage = () => {
-    fetch(`http://localhost:1305/api/employers/${profile.id}/deleteImage`, {
+    fetch(`https://fsad-sdp17-backend-2.onrender.com/api/employers/${profile.id}/deleteImage`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`

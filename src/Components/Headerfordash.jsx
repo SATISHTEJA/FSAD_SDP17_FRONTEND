@@ -23,7 +23,7 @@ const HeaderforDash = () => {
     setAdmin(parsed);
     setImgLoading(false);
   }
-  fetch(`http://localhost:1305/api/employers/${storedAdmin.id}`, {
+  fetch(`https://fsad-sdp17-backend-2.onrender.com/api/employers/${storedAdmin.id}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -91,7 +91,7 @@ const HeaderforDash = () => {
               admin?.image
                 ? admin.image.startsWith("data:")
                   ? admin.image
-                  : `http://localhost:1305/api/employers/image/${admin.image}`
+                  : `https://fsad-sdp17-backend-2.onrender.com/api/employers/image/${admin.image}`
                 : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
             }
             alt="profile"
