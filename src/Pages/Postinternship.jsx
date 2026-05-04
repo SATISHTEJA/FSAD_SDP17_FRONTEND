@@ -29,6 +29,7 @@ const Postinternship = () => {
 
   const [form, setForm] = useState({
     title: "",
+    companyname: admin?.companyname || "",
     duration: "",
     location: "Remote",
     stipend: "",
@@ -78,7 +79,7 @@ const Postinternship = () => {
           }),
         }
       );
-
+      
       if (!res.ok) throw new Error("Failed");
 
       const data = await res.json();
@@ -101,6 +102,7 @@ const Postinternship = () => {
       alert("Error posting internship");
     }
   };
+
 
   const handleDelete = async (id) => {
   try {

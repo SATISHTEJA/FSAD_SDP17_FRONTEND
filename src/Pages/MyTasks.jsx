@@ -234,7 +234,7 @@ const MyTasks = () => {
 
                     {task.submissionFileName && (
                       <a
-                        href={`http://localhost:1305/api/tasks/file/${task.id}`}
+                        href={`https://fsad-sdp17-backend-2.onrender.com/api/tasks/file/${task.id}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="view-btn"

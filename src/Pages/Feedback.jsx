@@ -33,7 +33,6 @@ const Feedback = () => {
     fetch(`https://fsad-sdp17-backend-2.onrender.com/api/evaluations/student/${student.id}`)
       .then((res) => res.json())
       .then((data) => {
-        console.log("Evaluations:", data);
         setEvaluations(data);
         setLoading(false);
       })

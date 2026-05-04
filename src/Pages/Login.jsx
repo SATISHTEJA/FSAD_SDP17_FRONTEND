@@ -85,6 +85,7 @@ const Login = () => {
             id: data.id,
             name: data.name,
             email: data.email,
+            companyname: data.companyname,
           })
         );
 

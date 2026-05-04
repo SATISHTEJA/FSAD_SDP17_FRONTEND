@@ -37,6 +37,7 @@ const BrowseInternships = () => {
     resumeName: "",
   });
 
+
   useEffect(() => {
     setLoading(true);
 
@@ -85,6 +86,7 @@ const BrowseInternships = () => {
       alert("Resume is required for Employees.");
       return;
     }
+    
 
     const formData = new FormData();
     formData.append("fullName", form.name);

@@ -39,7 +39,6 @@ const MyApplications = () => {
     fetch(`https://fsad-sdp17-backend-2.onrender.com/api/applications/student/${student.id}`)
       .then((res) => res.json())
       .then((data) => {
-        console.log("Applications:", data);
         setApplications(data);
         setLoading(false);
       })
